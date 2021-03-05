@@ -109,6 +109,8 @@ class avl_tree:
             tree.right = self.insert(tree.right, value)
         return self.balance(tree)
 
+    #
+
     def in_order(self, tree: avl):
         if tree is None:
             return
@@ -133,27 +135,28 @@ class avl_tree:
         self.post_order(tree.right)
         print(str(tree.value) + " ", end="")
 
+    #TODO: Do delete function
 
 def __test__():
     avlTree = avl_tree()
     # First insert into None node (create root)
-    r = avlTree.insertRoot(3)
-    r = avlTree.insert(r, 2)
-    r = avlTree.insert(r, 1)
-    r = avlTree.insert(r, 4)
-    r = avlTree.insert(r, 5)
-    r = avlTree.insert(r, 6)
-    r = avlTree.insert(r, 7)
-    r = avlTree.insert(r, 16)
-    r = avlTree.insert(r, 15)
-    r = avlTree.insert(r, 14)
-    avlTree.in_order(r)
+    root = avlTree.insertRoot(3)
+    root = avlTree.insert(root, 2)
+    root = avlTree.insert(root, 1)
+    root = avlTree.insert(root, 4)
+    root = avlTree.insert(root, 5)
+    root = avlTree.insert(root, 6)
+    root = avlTree.insert(root, 7)
+    root = avlTree.insert(root, 16)
+    root = avlTree.insert(root, 15)
+    root = avlTree.insert(root, 14)
+    avlTree.in_order(root)
     print("")
-    avlTree.pre_order(r)
+    avlTree.pre_order(root)
     print("")
-    avlTree.post_order(r)
+    avlTree.post_order(root)
     print("")
-    print(r)
+    print(root)
 
 
 # __test__()
