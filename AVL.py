@@ -64,6 +64,14 @@ class avl_tree:
                 tree = avl_tree.rr_rotation(tree)
         return tree
 
+    @staticmethod
+    def insertRoot(value: int):
+        tree = avl()
+        tree.value = value
+        tree.left = None
+        tree.right = None
+        return tree
+
     def insert(self, tree, value: int):
         if tree is None:
             tree = avl()
@@ -77,7 +85,7 @@ class avl_tree:
             tree.right = self.insert(tree.right, value)
         return self.balance(tree)
 
-    # TODO: Fix show and order functions
+    # TODO: Fix show
     def show(self, tree: avl, depth=1):
         if tree is not None:
             self.show(tree.right, depth + 1)
@@ -88,12 +96,13 @@ class avl_tree:
                 if tree is self.root:
                     break
 
-                print(" " + str(tree.value), end="")
+                print(" " + str(tree.value))
                 self.show(tree.left, depth + 1)
 
     def in_order(self, tree: avl):
         if tree is None:
             return
+
         self.in_order(tree.left)
         print(str(tree.value) + " ", end="")
         self.in_order(tree.right)
@@ -103,22 +112,22 @@ class avl_tree:
             return
 
         print(str(tree.value) + " ", end="")
-        self.in_order(tree.left)
-        self.in_order(tree.right)
+        self.pre_order(tree.left)
+        self.pre_order(tree.right)
 
     def post_order(self, tree: avl):
         if tree is None:
             return
 
-        self.in_order(tree.left)
-        self.in_order(tree.right)
+        self.post_order(tree.left)
+        self.post_order(tree.right)
         print(str(tree.value) + " ", end="")
 
 
 def __test__():
     avlTree = avl_tree()
     # First insert into None node (create root)
-    r = avlTree.insert(None, 13)
+    r = avlTree.insertRoot(13)
     r = avlTree.insert(r, 10)
     r = avlTree.insert(r, 15)
     r = avlTree.insert(r, 5)
@@ -126,14 +135,14 @@ def __test__():
     r = avlTree.insert(r, 4)
     r = avlTree.insert(r, 8)
     r = avlTree.insert(r, 16)
-    # avlTree.in_order(r)
-    # print("")
-    # avlTree.pre_order(r)
-    # print("")
-    # avlTree.post_order(r)
-    # print("")
+    avlTree.in_order(r)
+    print("")
+    avlTree.pre_order(r)
+    print("")
+    avlTree.post_order(r)
+    print("")
 
-    avlTree.show(r)
+    # avlTree.show(r)
 
 
 __test__()
