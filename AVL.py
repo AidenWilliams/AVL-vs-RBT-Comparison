@@ -4,10 +4,34 @@ class avl:
         self.left = None
         self.right = None
 
+    # Thank you to Alan Davis for this print string function
+    def __str__(self, node=None):
+        if node is None:
+            return '\n'.join(self.__str__(self))
+        strings = []
+        if node.right is not None:
+            for right_string in self.__str__(node.right):
+                strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
+        strings.append('-> ({})'.format(repr(node.value)))
+        if node.left is not None:
+            for left_string in self.__str__(node.left):
+                strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
+        return strings
+
 
 class avl_tree:
     def __init__(self):
         self.root = avl()
+
+    def __str__(self, node=None):
+        if node is None:
+            if self.is_empty():
+                return 'root -> None'
+            else:
+                return '\n'.join(self.root.__str__(self.root))
+
+    def is_empty(self):
+        return self.root is None
 
     def height(self, tree: avl):
         h = 0
@@ -113,20 +137,23 @@ class avl_tree:
 def __test__():
     avlTree = avl_tree()
     # First insert into None node (create root)
-    r = avlTree.insertRoot(13)
-    r = avlTree.insert(r, 10)
-    r = avlTree.insert(r, 15)
-    r = avlTree.insert(r, 5)
-    r = avlTree.insert(r, 11)
+    r = avlTree.insertRoot(3)
+    r = avlTree.insert(r, 2)
+    r = avlTree.insert(r, 1)
     r = avlTree.insert(r, 4)
-    r = avlTree.insert(r, 8)
+    r = avlTree.insert(r, 5)
+    r = avlTree.insert(r, 6)
+    r = avlTree.insert(r, 7)
     r = avlTree.insert(r, 16)
+    r = avlTree.insert(r, 15)
+    r = avlTree.insert(r, 14)
     avlTree.in_order(r)
     print("")
     avlTree.pre_order(r)
     print("")
     avlTree.post_order(r)
     print("")
+    print(r)
 
 
-__test__()
+# __test__()
