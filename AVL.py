@@ -90,3 +90,25 @@ class avl_tree:
                 print(" " + str(tree.value))
                 self.show(tree.left, depth + 1)
 
+    def in_order(self, tree: avl):
+        if tree is None:
+            return
+        self.in_order(tree.left)
+        print(str(tree.value) + " ")
+        self.in_order(tree.right)
+
+    def pre_order(self, tree: avl):
+        if tree is None:
+            return
+
+        print(str(tree.value) + " ")
+        self.in_order(tree.left)
+        self.in_order(tree.right)
+
+    def post_order(self, tree: avl):
+        if tree is None:
+            return
+
+        self.in_order(tree.left)
+        self.in_order(tree.right)
+        print(str(tree.value) + " ")
