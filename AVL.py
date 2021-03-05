@@ -26,35 +26,67 @@ class avl_tree:
 
     @staticmethod
     def rr_rotation(parent: avl):
-        node = parent.right
-        parent.right = node.left
-        node.left = parent
-        return node
+        tree = parent.right
+        parent.right = tree.left
+        tree.left = parent
+        return tree
 
     @staticmethod
     def ll_rotation(parent: avl):
-        node = parent.left
-        parent.left = node.right
-        node.right = parent
-        return node
+        tree = parent.left
+        parent.left = tree.right
+        tree.right = parent
+        return tree
 
     @staticmethod
     def lr_rotation(parent: avl):
-        node = parent.left
-        parent.left = avl_tree.rr_rotation(node)
+        tree = parent.left
+        parent.left = avl_tree.rr_rotation(tree)
         return avl_tree.ll_rotation(parent)
 
     @staticmethod
     def rl_rotation(parent: avl):
-        node = parent.right
-        parent.right = avl_tree.ll_rotation(node)
+        tree = parent.right
+        parent.right = avl_tree.ll_rotation(tree)
         return avl_tree.rr_rotation(parent)
 
+    def balance(self, tree: avl):
+        bal_factor = self.difference(tree)
+        if bal_factor > 1:
+            if self.difference(tree.left) > 0:
+                tree = avl_tree.ll_rotation(tree)
+            else:
+                tree = avl_tree.lr_rotation(tree)
+        elif bal_factor < -1:
+            if self.difference(tree.right) > 0:
+                tree = avl_tree.rl_rotation(tree)
+            else:
+                tree = avl_tree.rr_rotation(tree)
+        return tree
 
-'''avl *avl_tree::lr_rotat(avl *parent) {
-   avl *t;
-   t = parent->l;
-   parent->l = rr_rotat(t);
-   cout<<"Left-Right Rotation";
-   return ll_rotat(parent);
-}'''
+    def insert(self, tree: avl, value: int):
+        if tree is None:
+            tree = avl()
+            tree.value = value
+            tree.left = None
+            tree.right = None
+            return tree
+        elif value < tree.value:
+            tree.left = self.insert(tree.left, value)
+        elif value >= tree.value:
+            tree.right = self.insert(tree.right, value)
+        return self.balance(tree)
+
+    def show(self, tree: avl, depth=1):
+        if tree is not None:
+            self.show(tree.right, depth + 1)
+            print(" ")
+            if tree is self.right:
+                print("Root -> ")
+            for i in range(depth):
+                if tree is self.right:
+                    break
+
+                print(" " + str(tree.value))
+                self.show(tree.left, depth + 1)
+
