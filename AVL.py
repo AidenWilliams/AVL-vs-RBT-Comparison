@@ -85,20 +85,6 @@ class avl_tree:
             tree.right = self.insert(tree.right, value)
         return self.balance(tree)
 
-    # TODO: Fix show
-    def show(self, tree: avl, depth=1):
-        if tree is not None:
-            self.show(tree.right, depth + 1)
-            print(" ", end="")
-            if tree is self.root:
-                print("Root -> ", end="")
-            for i in range(depth):
-                if tree is self.root:
-                    break
-
-                print(" " + str(tree.value))
-                self.show(tree.left, depth + 1)
-
     def in_order(self, tree: avl):
         if tree is None:
             return
@@ -141,8 +127,6 @@ def __test__():
     print("")
     avlTree.post_order(r)
     print("")
-
-    # avlTree.show(r)
 
 
 __test__()
