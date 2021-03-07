@@ -70,17 +70,17 @@ class avl(object):
                 tree = avl.rr_rotation(tree)
         return tree
 
-    def _insert(self, tree, value):
-        if tree is None:
+    def _insert(self, node, value):
+        if node is None:
             return TN.TreeNode(value)
 
-        if value < tree.value:
-            tree.left = self._insert(tree.left, value)
+        if value < node.value:
+            node.left = self._insert(node.left, value)
 
-        elif value >= tree.value:
-            tree.right = self._insert(tree.right, value)
+        elif value >= node.value:
+            node.right = self._insert(node.right, value)
 
-        return self.balance(tree)
+        return self.balance(node)
 
     def insert(self, value):
         if self.root is None:
@@ -88,7 +88,52 @@ class avl(object):
         else:
             self.root = self._insert(self.root, value)
 
-    # TODO: Do delete function
+    # returns node of node containing value if found
+    def _find(self, node, value):
+        if node is None:
+            return None
+        if value < node.value:
+            return self._find(node.left, value)
+        elif value > node.value:
+            return self._find(node.right, value)
+        elif value is node.value:
+            return node
+
+    def _getMinValueNode(self, root):
+        if root is None or root.left is None:
+            return root
+
+        return self._getMinValueNode(root.left)
+
+    def _delete(self, node, value):
+        if node is None:
+            return None
+
+        elif value < node.value:
+            node.left = self._delete(node.left, value)
+
+        elif value > node.value:
+            node.right = self._delete(node.right, value)
+
+        else:
+            if node.left is None:
+                temp = node.right
+                return temp
+
+            elif node.right is None:
+                temp = node.left
+                return temp
+
+            temp = self._getMinValueNode(node.right)
+            temp.value = temp.value
+            node.right = self._delete(temp.right, temp.value)
+
+    def delete(self, value):
+        node = self._find(self.root, value)
+        children = node.traverse_prefix()[1:]
+        self._delete(self.root, value)
+        for child in children:
+            self.insert(child)
 
 
 def __test__():
@@ -100,9 +145,12 @@ def __test__():
     AVL.insert(40)
     AVL.insert(50)
     AVL.insert(25)
-    print(AVL.root.traverse_infix())
-    print(AVL.root.traverse_prefix())
-    print(AVL.root.traverse_postfix())
+    # print(AVL.root.traverse_infix())
+    # print(AVL.root.traverse_prefix())
+    # print(AVL.root.traverse_postfix())
+    print(AVL)
+    AVL.delete(20)
+    print("*****************************")
     print(AVL)
 
 
