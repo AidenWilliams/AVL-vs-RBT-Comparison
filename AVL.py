@@ -1,27 +1,9 @@
-class avl:
+import TreeNode as TN
+
+
+class avl(object):
     def __init__(self):
-        self.value = 0
-        self.left = None
-        self.right = None
-
-    # Thank you to Alan Davis for this print string function
-    def __str__(self, node=None):
-        if node is None:
-            return '\n'.join(self.__str__(self))
-        strings = []
-        if node.right is not None:
-            for right_string in self.__str__(node.right):
-                strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
-        strings.append('-> ({})'.format(repr(node.value)))
-        if node.left is not None:
-            for left_string in self.__str__(node.left):
-                strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
-        return strings
-
-
-class avl_tree:
-    def __init__(self):
-        self.root = avl()
+        self.root = None
 
     def __str__(self, node=None):
         if node is None:
@@ -33,7 +15,7 @@ class avl_tree:
     def is_empty(self):
         return self.root is None
 
-    def height(self, tree: avl):
+    def height(self, tree: TN.TreeNode):
         h = 0
         if tree is not None:
             l_height = self.height(tree.left)
@@ -43,120 +25,85 @@ class avl_tree:
 
         return h
 
-    def difference(self, tree: avl):
+    def difference(self, tree: TN.TreeNode):
         l_height = self.height(tree.left)
         r_height = self.height(tree.right)
         return l_height - r_height
 
     @staticmethod
-    def rr_rotation(parent: avl):
+    def rr_rotation(parent: TN.TreeNode):
         child = parent.right
         parent.right = child.left
         child.left = parent
         return child
 
     @staticmethod
-    def ll_rotation(parent: avl):
+    def ll_rotation(parent: TN.TreeNode):
         child = parent.left
         parent.left = child.right
         child.right = parent
         return child
 
     @staticmethod
-    def lr_rotation(parent: avl):
+    def lr_rotation(parent: TN.TreeNode):
         child = parent.left
-        parent.left = avl_tree.rr_rotation(child)
-        return avl_tree.ll_rotation(parent)
+        parent.left = avl.rr_rotation(child)
+        return avl.ll_rotation(parent)
 
     @staticmethod
-    def rl_rotation(parent: avl):
+    def rl_rotation(parent: TN.TreeNode):
         child = parent.right
-        parent.right = avl_tree.ll_rotation(child)
-        return avl_tree.rr_rotation(parent)
+        parent.right = avl.ll_rotation(child)
+        return avl.rr_rotation(parent)
 
-    def balance(self, tree: avl):
+    def balance(self, tree: TN.TreeNode):
         bal_factor = self.difference(tree)
         if bal_factor > 1:
             if self.difference(tree.left) > 0:
-                tree = avl_tree.ll_rotation(tree)
+                tree = avl.ll_rotation(tree)
             else:
-                tree = avl_tree.lr_rotation(tree)
+                tree = avl.lr_rotation(tree)
         elif bal_factor < -1:
             if self.difference(tree.right) > 0:
-                tree = avl_tree.rl_rotation(tree)
+                tree = avl.rl_rotation(tree)
             else:
-                tree = avl_tree.rr_rotation(tree)
+                tree = avl.rr_rotation(tree)
         return tree
 
-    @staticmethod
-    def insertRoot(value: int):
-        tree = avl()
-        tree.value = value
-        tree.left = None
-        tree.right = None
-        return tree
-
-    def insert(self, tree, value: int):
+    def _insert(self, tree, value):
         if tree is None:
-            tree = avl()
-            tree.value = value
-            tree.left = None
-            tree.right = None
-            return tree
-        elif value < tree.value:
-            tree.left = self.insert(tree.left, value)
+            return TN.TreeNode(value)
+
+        if value < tree.value:
+            tree.left = self._insert(tree.left, value)
+
         elif value >= tree.value:
-            tree.right = self.insert(tree.right, value)
+            tree.right = self._insert(tree.right, value)
+
         return self.balance(tree)
 
-    #
+    def insert(self, value):
+        if self.root is None:
+            self.root = TN.TreeNode(value)
+        else:
+            self.root = self._insert(self.root, value)
 
-    def in_order(self, tree: avl):
-        if tree is None:
-            return
+    # TODO: Do delete function
 
-        self.in_order(tree.left)
-        print(str(tree.value) + " ", end="")
-        self.in_order(tree.right)
-
-    def pre_order(self, tree: avl):
-        if tree is None:
-            return
-
-        print(str(tree.value) + " ", end="")
-        self.pre_order(tree.left)
-        self.pre_order(tree.right)
-
-    def post_order(self, tree: avl):
-        if tree is None:
-            return
-
-        self.post_order(tree.left)
-        self.post_order(tree.right)
-        print(str(tree.value) + " ", end="")
-
-    #TODO: Do delete function
 
 def __test__():
-    avlTree = avl_tree()
+    AVL = avl()
     # First insert into None node (create root)
-    root = avlTree.insertRoot(3)
-    root = avlTree.insert(root, 2)
-    root = avlTree.insert(root, 1)
-    root = avlTree.insert(root, 4)
-    root = avlTree.insert(root, 5)
-    root = avlTree.insert(root, 6)
-    root = avlTree.insert(root, 7)
-    root = avlTree.insert(root, 16)
-    root = avlTree.insert(root, 15)
-    root = avlTree.insert(root, 14)
-    avlTree.in_order(root)
-    print("")
-    avlTree.pre_order(root)
-    print("")
-    avlTree.post_order(root)
-    print("")
-    print(root)
+    AVL.insert(10)
+    AVL.insert(20)
+    AVL.insert(30)
+    AVL.insert(40)
+    AVL.insert(50)
+    AVL.insert(25)
+    print(AVL.root.traverse_infix())
+    print(AVL.root.traverse_prefix())
+    print(AVL.root.traverse_postfix())
+    print(AVL)
 
 
-# __test__()
+__test__()
