@@ -10,7 +10,7 @@ class avl(object):
             if self.is_empty():
                 return 'root -> None'
             else:
-                return '\n'.join(self.root.__str__(self.root))
+                return '\n'.join(self.root.__str__(self.root))# necessary 2x?
 
     def is_empty(self):
         return self.root is None
@@ -132,6 +132,7 @@ class avl(object):
         node = self._find(self.root, value)
         children = node.traverse_prefix()[1:]
         self._delete(self.root, value)
+        # self.balance(self.root)
         for child in children:
             self.insert(child)
 
