@@ -10,7 +10,7 @@ class avl(object):
             if self.is_empty():
                 return 'root -> None'
             else:
-                return '\n'.join(self.root.__str__(self.root))# necessary 2x?
+                return '\n'.join(self.root.__str__(self.root))
 
     def is_empty(self):
         return self.root is None
@@ -30,44 +30,41 @@ class avl(object):
         r_height = self.height(tree.right)
         return l_height - r_height
 
-    @staticmethod
-    def rr_rotation(parent: TN.TreeNode):
+
+    def rr_rotation(self, parent: TN.TreeNode):
         child = parent.right
         parent.right = child.left
         child.left = parent
         return child
 
-    @staticmethod
-    def ll_rotation(parent: TN.TreeNode):
+    def ll_rotation(self, parent: TN.TreeNode):
         child = parent.left
         parent.left = child.right
         child.right = parent
         return child
 
-    @staticmethod
-    def lr_rotation(parent: TN.TreeNode):
+    def lr_rotation(self, parent: TN.TreeNode):
         child = parent.left
-        parent.left = avl.rr_rotation(child)
-        return avl.ll_rotation(parent)
+        parent.left = self.rr_rotation(child)
+        return self.ll_rotation(parent)
 
-    @staticmethod
-    def rl_rotation(parent: TN.TreeNode):
+    def rl_rotation(self, parent: TN.TreeNode):
         child = parent.right
-        parent.right = avl.ll_rotation(child)
-        return avl.rr_rotation(parent)
+        parent.right = self.ll_rotation(child)
+        return self.rr_rotation(parent)
 
     def balance(self, tree: TN.TreeNode):
         bal_factor = self.difference(tree)
         if bal_factor > 1:
             if self.difference(tree.left) > 0:
-                tree = avl.ll_rotation(tree)
+                tree = self.ll_rotation(tree)
             else:
-                tree = avl.lr_rotation(tree)
+                tree = self.lr_rotation(tree)
         elif bal_factor < -1:
             if self.difference(tree.right) > 0:
-                tree = avl.rl_rotation(tree)
+                tree = self.rl_rotation(tree)
             else:
-                tree = avl.rr_rotation(tree)
+                tree = self.rr_rotation(tree)
         return tree
 
     def _insert(self, node, value):
@@ -99,42 +96,77 @@ class avl(object):
         elif value is node.value:
             return node
 
-    def _getMinValueNode(self, root):
-        if root is None or root.left is None:
-            return root
+    # def _getMinValueNode(self, root):
+    #     if root is None or root.left is None:
+    #         return root
+    #
+    #     return self._getMinValueNode(root.left)
+    #
+    # def _delete(self, node, value):
+    #     if node is None:
+    #         return None
+    #
+    #     elif value < node.value:
+    #         node.left = self._delete(node.left, value)
+    #
+    #     elif value > node.value:
+    #         node.right = self._delete(node.right, value)
+    #
+    #     else:
+    #         if node.left is None:
+    #             return node.right
+    #
+    #         elif node.right is None:
+    #             return node.left
+    #
+    #         temp = self._getMinValueNode(node.right)
+    #         node.right = self._delete(temp.right, temp.value)
+    #
+    # def delete(self, *args):
+    #     checklist = {v: False for v in args}
+    #     for v in checklist:
+    #         if checklist[v]:
+    #             continue
+    #
+    #         node = self._find(self.root, v)
+    #         children = node.traverse_prefix()[1:]
+    #
+    #         # Avoid inserting ones that will be deleted anyways
+    #         safe_children = []
+    #         for c in children:
+    #             if c in checklist:
+    #                 checklist[c] = True
+    #             else:
+    #                 safe_children.append(c)
+    #
+    #         self._delete(self.root, v)
+    #         for child in safe_children:
+    #             self.insert(child)
+    #
+    #     self.balance(self.root)
 
-        return self._getMinValueNode(root.left)
-
-    def _delete(self, node, value):
+    def delete(self, node, value):
         if node is None:
             return None
 
+        if value > node.value:
+            node.right = self.delete(node.right, value)
         elif value < node.value:
-            node.left = self._delete(node.left, value)
-
-        elif value > node.value:
-            node.right = self._delete(node.right, value)
-
+            node.left = self.delete(node.left, value)
         else:
-            if node.left is None:
+            if node.right is not None:
                 temp = node.right
-                return temp
 
-            elif node.right is None:
-                temp = node.left
-                return temp
+                while temp.left is not None:
+                    temp = temp.left
 
-            temp = self._getMinValueNode(node.right)
-            temp.value = temp.value
-            node.right = self._delete(temp.right, temp.value)
+                node.value = temp.value
+                node.right = self.delete(node.right, node.value)
+            else:
+                return node.left
 
-    def delete(self, value):
-        node = self._find(self.root, value)
-        children = node.traverse_prefix()[1:]
-        self._delete(self.root, value)
-        # self.balance(self.root)
-        for child in children:
-            self.insert(child)
+        node = self.balance(node)
+        return node
 
 
 def __test__():
@@ -146,13 +178,15 @@ def __test__():
     AVL.insert(40)
     AVL.insert(50)
     AVL.insert(25)
-    # print(AVL.root.traverse_infix())
-    # print(AVL.root.traverse_prefix())
-    # print(AVL.root.traverse_postfix())
     print(AVL)
-    AVL.delete(20)
+    AVL.delete(AVL.root, 40)
+    # AVL.root = AVL.balance(AVL.root)
+    print("*****************************")
+    print(AVL)
+    AVL.insert(40)
     print("*****************************")
     print(AVL)
 
 
 __test__()
+#TODO: Get an algorithm and do this from scratch incl insertion
