@@ -1,6 +1,6 @@
 class TreeNode(object):
-    def __init__(self, value, left_child=None, right_child=None):
-        self.value = value
+    def __init__(self, data, left_child=None, right_child=None):
+        self.data = data
         self.left = left_child
         self.right = right_child
         # ignored for avl trees
@@ -13,7 +13,7 @@ class TreeNode(object):
         if node.right is not None:
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
-        strings.append('-> ({})'.format(repr(node.value)))
+        strings.append('-> ({})'.format(repr(node.data)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
@@ -26,7 +26,7 @@ class TreeNode(object):
         if self.left:
             self.left.traverse_infix(result)
 
-        result.append(self.value)
+        result.append(self.data)
 
         if self.right:
             self.right.traverse_infix(result)
@@ -37,7 +37,7 @@ class TreeNode(object):
         if result is None:
             result = []
 
-        result.append(self.value)
+        result.append(self.data)
 
         if self.left:
             self.left.traverse_prefix(result)
@@ -57,6 +57,6 @@ class TreeNode(object):
         if self.right:
             self.right.traverse_postfix(result)
 
-        result.append(self.value)
+        result.append(self.data)
 
         return result
