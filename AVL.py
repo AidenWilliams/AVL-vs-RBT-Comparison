@@ -1,7 +1,7 @@
 from TreeNode import TreeNode
 
 
-class avl(object):
+class AVL(object):
     def __init__(self):
         self.root = None
 
@@ -144,24 +144,24 @@ class avl(object):
 
 
 def __test__():
-    AVL = avl()
+    avl = AVL()
     # First insert into None node (create root)
-    AVL.insert(10)
-    AVL.insert(20)
-    AVL.insert(30)
-    AVL.insert(40)
-    AVL.insert(25)
+    avl.insert(10)
+    avl.insert(20)
+    avl.insert(30)
+    avl.insert(40)
+    avl.insert(25)
     #
-    AVL.insert(50)
-    print(AVL)
+    avl.insert(50)
+    print(avl)
     print("*****************************")
-    AVL.delete(40, 50)
-    print(AVL)
+    avl.delete(40, 50)
+    print(avl)
     print("*****************************")
     # AVL.delete(50)
     # # AVL.root = AVL.balance(AVL.root)
 
-    print(AVL)
+    print(avl)
     # print(AVL)
     # AVL.insert(40)
     # print("*****************************")

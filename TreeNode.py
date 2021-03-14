@@ -1,10 +1,18 @@
+"""
+The AVL trees are more balanced compared to Red-Black Trees, but they may cause more rotations during insertion and
+deletion. So if your application involves frequent insertions and deletions, then Red-Black trees should be preferred.
+And if the insertions and deletions are less frequent and search is a more frequent operation, then AVL tree should be
+preferred over Red-Black Tree.
+"""
+
+
 class TreeNode(object):
-    def __init__(self, data, left_child=None, right_child=None):
+    def __init__(self, data, left_child=None, right_child=None, colour=0):
         self.data = data
         self.left = left_child
         self.right = right_child
         # ignored for avl trees
-        self.color = 1  # 1 for red, 0 for black
+        self.colour = colour  # 1 for red, 0 for black
 
     def __str__(self, node=None):
         if node is None:
@@ -13,7 +21,8 @@ class TreeNode(object):
         if node.right is not None:
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
-        strings.append('-> ({})'.format(repr(node.data)))
+        c = 98 - 7 * self.colour
+        strings.append('-> \033['+str(c)+'m ({})\033[00m'.format(repr(node.data)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
