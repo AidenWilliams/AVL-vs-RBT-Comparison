@@ -21,7 +21,7 @@ class TreeNode(object):
         if node.right is not None:
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
-        c = 98 - 7 * self.colour
+        c = 98 - 7 * node.colour
         strings.append('-> \033['+str(c)+'m ({})\033[00m'.format(repr(node.data)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
@@ -69,3 +69,8 @@ class TreeNode(object):
         result.append(self.data)
 
         return result
+
+    def redChildren(self):
+        if self.right is None or self.left is None:
+            return False
+        return self.right.colour == self.right.colour and self.right.colour == 1
