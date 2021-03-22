@@ -49,23 +49,23 @@ class RBT(object):
             TN.right = self._insert(TN.right, data, path+[TN])
 
 
-        # # Balancing
-        # balance = self.getBalance(TN)
-        #
-        # if balance > 1 and data < TN.left.data:
-        #     return self.rightRotate(TN)
-        #
-        # if balance < -1 and data > TN.right.data:
-        #     return self.leftRotate(TN)
-        #
-        # if balance > 1 and data > TN.left.data:
-        #     TN.left = self.leftRotate(TN.left)
-        #     return self.rightRotate(TN)
-        #
-        # if balance < -1 and data < TN.right.data:
-        #     TN.right = self.rightRotate(TN.right)
-        #     return self.leftRotate(TN)
-        #
+        # Balancing
+        balance = self.getBalance(TN)
+
+        if balance > 1 and data < TN.left.data:
+            return self.rightRotate(TN)
+
+        if balance < -1 and data > TN.right.data:
+            return self.leftRotate(TN)
+
+        if balance > 1 and data > TN.left.data:
+            TN.left = self.leftRotate(TN.left)
+            return self.rightRotate(TN)
+
+        if balance < -1 and data < TN.right.data:
+            TN.right = self.rightRotate(TN.right)
+            return self.leftRotate(TN)
+
         return TN
 
     def insert(self, data):
@@ -93,22 +93,22 @@ class RBT(object):
 
     @staticmethod
     def leftRotate(TN):
-        #TN.colour = 1
+        TN.colour = 1
         TN1 = TN.right
         TN2 = TN1.left
         TN1.left = TN
         TN.right = TN2
-        #TN1.colour = 0
+        TN1.colour = 0
         return TN1
 
     @staticmethod
     def rightRotate(TN):
-        #TN.colour = 1
+        TN.colour = 1
         TN1 = TN.left
         TN2 = TN1.right
         TN1.right = TN
         TN.left = TN2
-        #TN1.colour = 0
+        TN1.colour = 0
         return TN1
 
 def __test__():
