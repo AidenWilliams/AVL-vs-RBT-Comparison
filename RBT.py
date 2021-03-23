@@ -4,6 +4,7 @@ from TreeNode import TreeNode
 class RBT(object):
     def __init__(self):
         self.root = None
+        self.flag = None
 
     def __str__(self, TN=None):
         if TN is None:
@@ -41,30 +42,43 @@ class RBT(object):
                     node.left.colour = 0
                     node.right.colour = 0
 
+            for n in path:
+                print(str(n.data) + ', ', end='')
+            print()
             return TreeNode(data, colour=1)
 
+        grandparent = path[-1]
+
         if data < TN.data:
-            TN.left = self._insert(TN.left, data, path+[TN])
+            TN.left = self._insert(TN.left, data, path + [TN])
+
+            if self.flag == 'right':
+                self.flag = None
+                return self.rightRotate(TN)
+            if self.flag == 'rightright':
+                self.flag = None
+                return self.rightRotate(self.rightRotate(TN))
+
+            if TN.colour == 1:
+                self.flag = 'right'
+                if grandparent is not None:
+                    if TN.data < grandparent.left.data:
+                        self.flag = 'rightright'
         else:
-            TN.right = self._insert(TN.right, data, path+[TN])
+            TN.right = self._insert(TN.right, data, path + [TN])
 
+            if self.flag == 'left':
+                self.flag = None
+                return self.leftRotate(TN)
+            if self.flag == 'leftleft':
+                self.flag = None
+                return self.leftRotate(self.leftRotate(TN))
 
-        # Balancing
-        balance = self.getBalance(TN)
-
-        if balance > 1 and data < TN.left.data:
-            return self.rightRotate(TN)
-
-        if balance < -1 and data > TN.right.data:
-            return self.leftRotate(TN)
-
-        if balance > 1 and data > TN.left.data:
-            TN.left = self.leftRotate(TN.left)
-            return self.rightRotate(TN)
-
-        if balance < -1 and data < TN.right.data:
-            TN.right = self.rightRotate(TN.right)
-            return self.leftRotate(TN)
+            if TN.colour == 1:
+                self.flag = 'left'
+                if grandparent is not None:
+                    if TN.data > grandparent.right.data:
+                        self.flag = 'leftleft'
 
         return TN
 
@@ -120,30 +134,31 @@ def __test__():
     # rbt.insert(40)
     # rbt.insert(25)
     # rbt.insert(50)
-    rbt.insert(15)
-    rbt.insert(10)
-    rbt.insert(20)
     rbt.insert(5)
-    rbt.insert(40)
-    rbt.insert(55)
+    rbt.insert(10)
+    rbt.insert(15)
+    rbt.insert(20)
+    #print(rbt)
     rbt.insert(30)
-    rbt.insert(50)
-    rbt.insert(60)
-    rbt.insert(70)
-    rbt.insert(65)
-    rbt.insert(85)
-    rbt.insert(80)
-    rbt.insert(90)
-    #rbt.insert(45)
+    # rbt.insert(40)
+    # rbt.insert(50)
+    # rbt.insert(55)
+    # rbt.insert(60)
+    # rbt.insert(65)
+    # rbt.insert(70)
+    # rbt.insert(80)
+    # rbt.insert(85)
+    # rbt.insert(90)
+    # rbt.insert(45)
     print(rbt)
-    #print("*****************************")
-    #avl.delete(40, 50)
-    #print(avl)
-    #print("*****************************")
+    # print("*****************************")
+    # avl.delete(40, 50)
+    # print(avl)
+    # print("*****************************")
     # AVL.delete(50)
     # # AVL.root = AVL.balance(AVL.root)
 
-    #print(avl)
+    # print(avl)
     # print(AVL)
     # AVL.insert(40)
     # print("*****************************")
