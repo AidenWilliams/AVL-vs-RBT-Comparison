@@ -1,4 +1,4 @@
-from TreeNode import TreeNode
+from Node import TreeNode
 
 
 class RBT(object):
