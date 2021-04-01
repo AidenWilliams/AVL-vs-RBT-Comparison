@@ -1,4 +1,66 @@
-from Node import TreeNode
+class AVLNode(object):
+    def __init__(self, key, left_child=None, right_child=None):
+        # key/data/value of the node
+        self.data = key
+        # Children of this node
+        self.left = left_child
+        self.right = right_child
+
+    def __str__(self, node=None):
+        if node is None:
+            return '\n'.join(self.__str__(self))
+        strings = []
+        if node.right is not None:
+            for right_string in self.__str__(node.right):
+                strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
+        c = 98 - 7 * node.colour
+        strings.append('-> \033['+str(c)+'m ({})\033[00m'.format(repr(node.data)))
+        if node.left is not None:
+            for left_string in self.__str__(node.left):
+                strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
+        return strings
+
+    def traverse_infix(self, result=None):
+        if result is None:
+            result = []
+
+        if self.left:
+            self.left.traverse_infix(result)
+
+        result.append(self.key)
+
+        if self.right:
+            self.right.traverse_infix(result)
+
+        return result
+
+    def traverse_prefix(self, result=None):
+        if result is None:
+            result = []
+
+        result.append(self.key)
+
+        if self.left:
+            self.left.traverse_prefix(result)
+
+        if self.right:
+            self.right.traverse_prefix(result)
+
+        return result
+
+    def traverse_postfix(self, result=None):
+        if result is None:
+            result = []
+
+        if self.left:
+            self.left.traverse_postfix(result)
+
+        if self.right:
+            self.right.traverse_postfix(result)
+
+        result.append(self.key)
+
+        return result
 
 
 class AVL(object):
@@ -15,7 +77,7 @@ class AVL(object):
     def is_empty(self):
         return self.root is None
 
-    def height(self, TN: TreeNode):
+    def height(self, TN: AVLNode):
         h = 0
         if TN is not None:
             l_height = self.height(TN.left)
@@ -24,7 +86,7 @@ class AVL(object):
             h = max_height + 1
         return h
 
-    def getBalance(self, TN: TreeNode):
+    def getBalance(self, TN: AVLNode):
         if not TN:
             return 0
 
@@ -33,7 +95,7 @@ class AVL(object):
     def _insert(self, TN, data):
         # Standard BST insertion
         if TN is None:
-            return TreeNode(data)
+            return AVLNode(data)
 
         if data < TN.data:
             TN.left = self._insert(TN.left, data)
@@ -61,7 +123,7 @@ class AVL(object):
 
     def insert(self, data):
         if self.root is None:
-            self.root = TreeNode(data)
+            self.root = AVLNode(data)
         else:
             self.root = self._insert(self.root, data)
 
