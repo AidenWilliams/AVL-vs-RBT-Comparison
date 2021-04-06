@@ -74,9 +74,14 @@ class AVLNode(object):
 class AVL(object):
     """
     AVL tree class which contains operations that make up and define an AVL tree.
+
+    rotation, node and comparison counts are kept for tree comparison
     """
     def __init__(self):
         self.root = None
+        self.rotations = 0
+        self.nodes = 0
+        self.comparisons = 0
 
     def __str__(self, AVLN=None):
         if AVLN is None:
@@ -106,6 +111,7 @@ class AVL(object):
     def _insert(self, AVLN, key):
         # Standard BST insertion
         if AVLN is None:
+            self.nodes += 1
             return AVLNode(key)
 
         if key < AVLN.key:
@@ -197,20 +203,21 @@ class AVL(object):
         if type(args[0]) == list:  # otherwise it is given as a tuple
             args = args[0]
         for key in args:
+            self.nodes -= 1
             self.root = self._delete(self.root, key)
 
-    @staticmethod
-    def leftRotate(AVLN):
+    def leftRotate(self, AVLN):
         AVLN1 = AVLN.right
         AVLN2 = AVLN1.left
         AVLN1.left = AVLN
         AVLN.right = AVLN2
+        self.rotations += 1
         return AVLN1
 
-    @staticmethod
-    def rightRotate(AVLN):
+    def rightRotate(self, AVLN):
         AVLN1 = AVLN.left
         AVLN2 = AVLN1.right
         AVLN1.right = AVLN
         AVLN.left = AVLN2
+        self.rotations += 1
         return AVLN1

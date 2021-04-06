@@ -81,6 +81,8 @@ class RBT(object):
 
     A Null node is kept as TNULL as I found it easier to implement the tree with it as well as it makes for better
     visualization.
+
+    rotation, node and comparison counts are kept for tree comparison
     """
     def __init__(self):
         self.TNULL = RBTNode(0)
@@ -88,6 +90,9 @@ class RBT(object):
         self.TNULL.left = None
         self.TNULL.right = None
         self.root = self.TNULL
+        self.rotations = 0
+        self.nodes = 0
+        self.comparisons = 0
 
     def __str__(self, TN=None):
         if TN is None:
@@ -116,6 +121,7 @@ class RBT(object):
             x.parent.right = y
         y.left = x
         x.parent = y
+        self.rotations += 1
 
     def RightRotate(self, x):
         if x is None:
@@ -134,6 +140,7 @@ class RBT(object):
             x.parent.left = y
         y.right = x
         x.parent = y
+        self.rotations += 1
 
     def _insertFix(self, key):
         while key.parent.colour == 1:
@@ -174,6 +181,7 @@ class RBT(object):
         self.root.colour = 0
 
     def insert(self, key):
+        self.nodes += 1
         # Ordinary Binary Search Insertion
         node = RBTNode(key)
         node.parent = None
@@ -336,4 +344,5 @@ class RBT(object):
         if type(args[0]) == list:  # otherwise it is given as a tuple
             args = args[0]
         for key in args:
+            self.nodes -= 1
             self._delete(self.root, key)
