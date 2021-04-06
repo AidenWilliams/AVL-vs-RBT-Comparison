@@ -1,6 +1,3 @@
-# Adapted from book
-
-
 class RBTNode(object):
     def __init__(self, key=None, left_child=None, right_child=None, parent=None, colour=0):
         self.key = key
@@ -24,6 +21,48 @@ class RBTNode(object):
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
         return strings
+
+    def traverse_infix(self, result=None):
+        if result is None:
+            result = []
+
+        if self.left:
+            self.left.traverse_infix(result)
+
+        result.append(self.key)
+
+        if self.right:
+            self.right.traverse_infix(result)
+
+        return result
+
+    def traverse_prefix(self, result=None):
+        if result is None:
+            result = []
+
+        result.append(self.key)
+
+        if self.left:
+            self.left.traverse_prefix(result)
+
+        if self.right:
+            self.right.traverse_prefix(result)
+
+        return result
+
+    def traverse_postfix(self, result=None):
+        if result is None:
+            result = []
+
+        if self.left:
+            self.left.traverse_postfix(result)
+
+        if self.right:
+            self.right.traverse_postfix(result)
+
+        result.append(self.key)
+
+        return result
 
 
 class RBT(object):
@@ -282,40 +321,39 @@ class RBT(object):
             args = args[0]
         for key in args:
             self._delete(self.root, key)
-            #self.root = self._delete(self.root, key)
 
-
-# rbt = RBT()
 #
-# rbt.insert(5)
-# rbt.insert(10)
-# rbt.insert(15)
-# rbt.insert(20)
-# rbt.insert(30)
-# rbt.insert(40)
-# rbt.insert(50)
-# rbt.insert(55)
-# rbt.insert(60)
-# rbt.insert(65)
-# rbt.insert(70)
-# rbt.insert(80)
-# rbt.insert(85)
-# rbt.insert(90)
-# rbt.insert(45)
+# # rbt = RBT()
+# #
+# # rbt.insert(5)
+# # rbt.insert(10)
+# # rbt.insert(15)
+# # rbt.insert(20)
+# # rbt.insert(30)
+# # rbt.insert(40)
+# # rbt.insert(50)
+# # rbt.insert(55)
+# # rbt.insert(60)
+# # rbt.insert(65)
+# # rbt.insert(70)
+# # rbt.insert(80)
+# # rbt.insert(85)
+# # rbt.insert(90)
+# # rbt.insert(45)
+# #
+# # print(rbt)
 #
-# print(rbt)
-
-avl = RBT()
-# First insert into None node (create root)
-avl.insert(10)
-avl.insert(20)
-avl.insert(30)
-avl.insert(40)
-avl.insert(25)
-#
-avl.insert(50)
-print(avl)
-print("*****************************")
-avl.delete(40, 50)
-print(avl)
-print("*****************************")
+# avl = RBT()
+# # First insert into None node (create root)
+# avl.insert(10)
+# avl.insert(20)
+# avl.insert(30)
+# avl.insert(40)
+# avl.insert(25)
+# #
+# avl.insert(50)
+# print(avl)
+# print("*****************************")
+# avl.delete(40, 50)
+# print(avl)
+# print("*****************************")

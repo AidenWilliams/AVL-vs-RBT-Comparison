@@ -1,4 +1,13 @@
 class AVLNode(object):
+    """
+    Node class for an AVL Tree
+
+    AVLNode is a basic node object with a key and 2 children.
+
+    A string function is provided for clean printing of the tree. - Credit guy
+
+    Infix, postfix and prefix is traversing is also provided.
+    """
     def __init__(self, key, left_child=None, right_child=None):
         # key/data/value of the node
         self.key = key
@@ -63,6 +72,9 @@ class AVLNode(object):
 
 
 class AVL(object):
+    """
+    AVL tree class which contains operations that make up and define an AVL tree.
+    """
     def __init__(self):
         self.root = None
 
@@ -202,31 +214,31 @@ class AVL(object):
         AVLN1.right = AVLN
         AVLN.left = AVLN2
         return AVLN1
-
-
-def __test__():
-    avl = AVL()
-    # First insert into None node (create root)
-    avl.insert(10)
-    avl.insert(20)
-    avl.insert(30)
-    avl.insert(40)
-    avl.insert(25)
-    #
-    avl.insert(50)
-    print(avl)
-    print("*****************************")
-    avl.delete(40, 50)
-    print(avl)
-    print("*****************************")
-    # AVL.delete(50)
-    # # AVL.root = AVL.balance(AVL.root)
-
-    print(avl)
-    # print(AVL)
-    # AVL.insert(40)
-    # print("*****************************")
-    # print(AVL)
-
-
-__test__()
+#
+#
+# def __test__():
+#     avl = AVL()
+#     # First insert into None node (create root)
+#     avl.insert(10)
+#     avl.insert(20)
+#     avl.insert(30)
+#     avl.insert(40)
+#     avl.insert(25)
+#     #
+#     avl.insert(50)
+#     print(avl)
+#     print("*****************************")
+#     avl.delete(40, 50)
+#     print(avl)
+#     print("*****************************")
+#     # AVL.delete(50)
+#     # # AVL.root = AVL.balance(AVL.root)
+#
+#     print(avl)
+#     # print(AVL)
+#     # AVL.insert(40)
+#     # print("*****************************")
+#     # print(AVL)
+#
+#
+# __test__()
