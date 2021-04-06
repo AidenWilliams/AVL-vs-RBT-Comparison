@@ -1,7 +1,7 @@
 class AVLNode(object):
     def __init__(self, key, left_child=None, right_child=None):
         # key/data/value of the node
-        self.data = key
+        self.key = key
         # Children of this node
         self.left = left_child
         self.right = right_child
@@ -13,8 +13,7 @@ class AVLNode(object):
         if node.right is not None:
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
-        c = 98 - 7 * node.colour
-        strings.append('-> \033['+str(c)+'m ({})\033[00m'.format(repr(node.data)))
+        strings.append('-> \033[98m ({})\033[00m'.format(repr(node.key)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
@@ -67,8 +66,8 @@ class AVL(object):
     def __init__(self):
         self.root = None
 
-    def __str__(self, TN=None):
-        if TN is None:
+    def __str__(self, AVLN=None):
+        if AVLN is None:
             if self.is_empty():
                 return 'root -> None'
             else:
@@ -77,55 +76,55 @@ class AVL(object):
     def is_empty(self):
         return self.root is None
 
-    def height(self, TN: AVLNode):
+    def height(self, AVLN: AVLNode):
         h = 0
-        if TN is not None:
-            l_height = self.height(TN.left)
-            r_height = self.height(TN.right)
+        if AVLN is not None:
+            l_height = self.height(AVLN.left)
+            r_height = self.height(AVLN.right)
             max_height = max(l_height, r_height)
             h = max_height + 1
         return h
 
-    def getBalance(self, TN: AVLNode):
-        if not TN:
+    def getBalance(self, AVLN: AVLNode):
+        if not AVLN:
             return 0
 
-        return self.height(TN.left) - self.height(TN.right)
+        return self.height(AVLN.left) - self.height(AVLN.right)
 
-    def _insert(self, TN, data):
+    def _insert(self, AVLN, key):
         # Standard BST insertion
-        if TN is None:
-            return AVLNode(data)
+        if AVLN is None:
+            return AVLNode(key)
 
-        if data < TN.data:
-            TN.left = self._insert(TN.left, data)
+        if key < AVLN.key:
+            AVLN.left = self._insert(AVLN.left, key)
         else:
-            TN.right = self._insert(TN.right, data)
+            AVLN.right = self._insert(AVLN.right, key)
 
         # Balancing
-        balance = self.getBalance(TN)
+        balance = self.getBalance(AVLN)
 
-        if balance > 1 and data < TN.left.data:
-            return self.rightRotate(TN)
+        if balance > 1 and key < AVLN.left.key:
+            return self.rightRotate(AVLN)
 
-        if balance < -1 and data > TN.right.data:
-            return self.leftRotate(TN)
+        if balance < -1 and key > AVLN.right.key:
+            return self.leftRotate(AVLN)
 
-        if balance > 1 and data > TN.left.data:
-            TN.left = self.leftRotate(TN.left)
-            return self.rightRotate(TN)
+        if balance > 1 and key > AVLN.left.key:
+            AVLN.left = self.leftRotate(AVLN.left)
+            return self.rightRotate(AVLN)
 
-        if balance < -1 and data < TN.right.data:
-            TN.right = self.rightRotate(TN.right)
-            return self.leftRotate(TN)
+        if balance < -1 and key < AVLN.right.key:
+            AVLN.right = self.rightRotate(AVLN.right)
+            return self.leftRotate(AVLN)
 
-        return TN
+        return AVLN
 
-    def insert(self, data):
+    def insert(self, key):
         if self.root is None:
-            self.root = AVLNode(data)
+            self.root = AVLNode(key)
         else:
-            self.root = self._insert(self.root, data)
+            self.root = self._insert(self.root, key)
 
     def getMinValueNode(self, root):
         if root is None or root.left is None:
@@ -133,76 +132,76 @@ class AVL(object):
 
         return self.getMinValueNode(root.left)
 
-    def _delete(self, TN, data):
+    def _delete(self, AVLN, key):
 
         # Perform standard BST delete
-        if not TN:
-            return TN
+        if not AVLN:
+            return AVLN
 
-        elif data < TN.data:
-            TN.left = self._delete(TN.left, data)
+        elif key < AVLN.key:
+            AVLN.left = self._delete(AVLN.left, key)
 
-        elif data > TN.data:
-            TN.right = self._delete(TN.right, data)
+        elif key > AVLN.key:
+            AVLN.right = self._delete(AVLN.right, key)
 
         else:
-            if TN.left is None:
-                temp = TN.right
-                TN = None
+            if AVLN.left is None:
+                temp = AVLN.right
+                AVLN = None
                 return temp
 
-            elif TN.right is None:
-                temp = TN.left
-                TN = None
+            elif AVLN.right is None:
+                temp = AVLN.left
+                AVLN = None
                 return temp
 
-            temp = self.getMinValueNode(TN.right)
-            TN.data = temp.data
-            TN.right = self._delete(TN.right, temp.data)
+            temp = self.getMinValueNode(AVLN.right)
+            AVLN.key = temp.key
+            AVLN.right = self._delete(AVLN.right, temp.key)
 
-        if TN is None:
-            return TN
+        if AVLN is None:
+            return AVLN
 
         # Balancing
-        balance = self.getBalance(TN)
+        balance = self.getBalance(AVLN)
 
-        if balance > 1 and self.getBalance(TN.left) >= 0:
-            return self.rightRotate(TN)
+        if balance > 1 and self.getBalance(AVLN.left) >= 0:
+            return self.rightRotate(AVLN)
 
-        if balance < -1 and self.getBalance(TN.right) <= 0:
-            return self.leftRotate(TN)
+        if balance < -1 and self.getBalance(AVLN.right) <= 0:
+            return self.leftRotate(AVLN)
 
-        if balance > 1 and self.getBalance(TN.left) < 0:
-            TN.left = self.leftRotate(TN.left)
-            return self.rightRotate(TN)
+        if balance > 1 and self.getBalance(AVLN.left) < 0:
+            AVLN.left = self.leftRotate(AVLN.left)
+            return self.rightRotate(AVLN)
 
-        if balance < -1 and self.getBalance(TN.right) > 0:
-            TN.right = self.rightRotate(TN.right)
-            return self.leftRotate(TN)
+        if balance < -1 and self.getBalance(AVLN.right) > 0:
+            AVLN.right = self.rightRotate(AVLN.right)
+            return self.leftRotate(AVLN)
 
-        return TN
+        return AVLN
 
     def delete(self, *args):
         if type(args[0]) == list:  # otherwise it is given as a tuple
             args = args[0]
-        for data in args:
-            self.root = self._delete(self.root, data)
+        for key in args:
+            self.root = self._delete(self.root, key)
 
     @staticmethod
-    def leftRotate(TN):
-        TN1 = TN.right
-        TN2 = TN1.left
-        TN1.left = TN
-        TN.right = TN2
-        return TN1
+    def leftRotate(AVLN):
+        AVLN1 = AVLN.right
+        AVLN2 = AVLN1.left
+        AVLN1.left = AVLN
+        AVLN.right = AVLN2
+        return AVLN1
 
     @staticmethod
-    def rightRotate(TN):
-        TN1 = TN.left
-        TN2 = TN1.right
-        TN1.right = TN
-        TN.left = TN2
-        return TN1
+    def rightRotate(AVLN):
+        AVLN1 = AVLN.left
+        AVLN2 = AVLN1.right
+        AVLN1.right = AVLN
+        AVLN.left = AVLN2
+        return AVLN1
 
 
 def __test__():
