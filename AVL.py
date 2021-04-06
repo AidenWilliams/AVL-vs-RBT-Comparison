@@ -214,31 +214,3 @@ class AVL(object):
         AVLN1.right = AVLN
         AVLN.left = AVLN2
         return AVLN1
-#
-#
-# def __test__():
-#     avl = AVL()
-#     # First insert into None node (create root)
-#     avl.insert(10)
-#     avl.insert(20)
-#     avl.insert(30)
-#     avl.insert(40)
-#     avl.insert(25)
-#     #
-#     avl.insert(50)
-#     print(avl)
-#     print("*****************************")
-#     avl.delete(40, 50)
-#     print(avl)
-#     print("*****************************")
-#     # AVL.delete(50)
-#     # # AVL.root = AVL.balance(AVL.root)
-#
-#     print(avl)
-#     # print(AVL)
-#     # AVL.insert(40)
-#     # print("*****************************")
-#     # print(AVL)
-#
-#
-# __test__()

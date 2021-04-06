@@ -1,4 +1,14 @@
 class RBTNode(object):
+    """
+    Node class for an RB Tree
+
+    Based on a basic node object with the addition of the colour of the node as well as a reference of the parent.
+    A reference is kept to make fixing the double red mistake easier to fix.
+
+    A string function is provided for clean printing of the tree. - Credit guy
+
+    Infix, postfix and prefix is traversing is also provided.
+    """
     def __init__(self, key=None, left_child=None, right_child=None, parent=None, colour=0):
         self.key = key
         self.left = left_child
@@ -66,6 +76,12 @@ class RBTNode(object):
 
 
 class RBT(object):
+    """
+    RB tree class which contains operations that make up and define an RB tree.
+
+    A Null node is kept as TNULL as I found it easier to implement the tree with it as well as it makes for better
+    visualization.
+    """
     def __init__(self):
         self.TNULL = RBTNode(0)
         self.TNULL.colour = 0
@@ -321,39 +337,3 @@ class RBT(object):
             args = args[0]
         for key in args:
             self._delete(self.root, key)
-
-#
-# # rbt = RBT()
-# #
-# # rbt.insert(5)
-# # rbt.insert(10)
-# # rbt.insert(15)
-# # rbt.insert(20)
-# # rbt.insert(30)
-# # rbt.insert(40)
-# # rbt.insert(50)
-# # rbt.insert(55)
-# # rbt.insert(60)
-# # rbt.insert(65)
-# # rbt.insert(70)
-# # rbt.insert(80)
-# # rbt.insert(85)
-# # rbt.insert(90)
-# # rbt.insert(45)
-# #
-# # print(rbt)
-#
-# avl = RBT()
-# # First insert into None node (create root)
-# avl.insert(10)
-# avl.insert(20)
-# avl.insert(30)
-# avl.insert(40)
-# avl.insert(25)
-# #
-# avl.insert(50)
-# print(avl)
-# print("*****************************")
-# avl.delete(40, 50)
-# print(avl)
-# print("*****************************")
