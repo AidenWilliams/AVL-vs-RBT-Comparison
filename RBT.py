@@ -105,15 +105,19 @@ class RBT(object):
         return self.root is None
 
     def LeftRotate(self, x):
+        self.comparisons += 1
         if x is None:
             raise Exception("x cannot be None")
         y = x.right
         x.right = y.left
+        self.comparisons += 1
         if y.left != self.TNULL:
             y.left.parent = x
 
         y.parent = x.parent
+        self.comparisons += 2
         if x.parent is None:
+            self.comparisons -= 1
             self.root = y
         elif x == x.parent.left:
             x.parent.left = y
@@ -124,15 +128,19 @@ class RBT(object):
         self.rotations += 1
 
     def RightRotate(self, x):
+        self.comparisons += 1
         if x is None:
             raise Exception("x cannot be None")
         y = x.left
         x.left = y.right
+        self.comparisons += 1
         if y.right != self.TNULL:
             y.right.parent = x
 
         y.parent = x.parent
+        self.comparisons += 2
         if x.parent is None:
+            self.comparisons -= 1
             self.root = y
         elif x == x.parent.right:
             x.parent.right = y
@@ -143,15 +151,19 @@ class RBT(object):
         self.rotations += 1
 
     def _insertFix(self, key):
+        self.comparisons += 1
         while key.parent.colour == 1:
+            self.comparisons += 1
             if key.parent == key.parent.parent.right:
                 u = key.parent.parent.left  # uncle
+                self.comparisons += 1
                 if u.colour == 1:
                     u.colour = 0
                     key.parent.colour = 0
                     key.parent.parent.colour = 1
                     key = key.parent.parent
                 else:
+                    self.comparisons += 1
                     if key == key.parent.left:
                         key = key.parent
                         self.RightRotate(key)
@@ -161,6 +173,7 @@ class RBT(object):
             else:
                 u = key.parent.parent.right  # uncle
 
+                self.comparisons += 1
                 if u.colour == 1:
                     # mirror case 3.1
                     u.colour = 0
@@ -168,6 +181,7 @@ class RBT(object):
                     key.parent.parent.colour = 1
                     key = key.parent.parent
                 else:
+                    self.comparisons += 1
                     if key == key.parent.right:
                         # mirror case 3.2.2
                         key = key.parent
@@ -176,8 +190,11 @@ class RBT(object):
                     key.parent.colour = 0
                     key.parent.parent.colour = 1
                     self.RightRotate(key.parent.parent)
+            self.comparisons += 1
             if key == self.root:
                 break
+
+            self.comparisons += 1
         self.root.colour = 0
 
     def insert(self, key):
@@ -193,16 +210,25 @@ class RBT(object):
         y = None
         x = self.root
 
+        self.comparisons += 1
         while x != self.TNULL:
             y = x
+
+            self.comparisons += 1
             if node.key < x.key:
                 x = x.left
             else:
                 x = x.right
 
+            self.comparisons += 1
+
         # y is parent of x
         node.parent = y
+
+        self.comparisons += 2
         if y is None:
+
+            self.comparisons -= 1
             self.root = node
         elif node.key < y.key:
             y.left = node
@@ -210,11 +236,13 @@ class RBT(object):
             y.right = node
 
         # if new node is a root node, simply return
+        self.comparisons += 1
         if node.parent is None:
             node.colour = 0
             return
 
         # if the grandparent is None, simply return
+        self.comparisons += 1
         if node.parent.parent is None:
             return
 
@@ -222,9 +250,15 @@ class RBT(object):
         self._insertFix(node)
 
     def __fix_delete(self, x):
+
+        self.comparisons += 1
         while x != self.root and x.colour == 0:
+
+            self.comparisons += 1
             if x == x.parent.left:
                 s = x.parent.right
+
+                self.comparisons += 1
                 if s.colour == 1:
                     # case 3.1
                     s.colour = 0
@@ -232,11 +266,14 @@ class RBT(object):
                     self.LeftRotate(x.parent)
                     s = x.parent.right
 
+                self.comparisons += 2
                 if s.left.colour == 0 and s.right.colour == 0:
                     # case 3.2
                     s.colour = 1
                     x = x.parent
                 else:
+
+                    self.comparisons += 1
                     if s.right.colour == 0:
                         # case 3.3
                         s.left.colour = 0
@@ -252,6 +289,8 @@ class RBT(object):
                     x = self.root
             else:
                 s = x.parent.left
+
+                self.comparisons += 1
                 if s.colour == 1:
                     # case 3.1
                     s.colour = 0
@@ -259,11 +298,14 @@ class RBT(object):
                     self.RightRotate(x.parent)
                     s = x.parent.left
 
+                self.comparisons += 2
                 if s.left.colour == 0 and s.right.colour == 0:
                     # case 3.2
                     s.colour = 1
                     x = x.parent
                 else:
+
+                    self.comparisons += 1
                     if s.left.colour == 0:
                         # case 3.3
                         s.right.colour = 0
@@ -277,27 +319,40 @@ class RBT(object):
                     s.left.colour = 0
                     self.RightRotate(x.parent)
                     x = self.root
+
+            self.comparisons += 1
         x.colour = 0
 
     def _delete(self, node, key):
         # find the node containing key
         z = self.TNULL
+        self.comparisons += 1
         while node != self.TNULL:
+
+            self.comparisons += 1
             if node.key == key:
                 z = node
 
+            self.comparisons += 1
             if node.key <= key:
                 node = node.right
             else:
                 node = node.left
 
+            self.comparisons += 1
+
+        self.comparisons += 1
         if z == self.TNULL:
             print("Couldn't find key in the tree")
             return
 
         y = z
         y_original_colour = y.colour
+
+        self.comparisons += 2
         if z.left == self.TNULL:
+
+            self.comparisons -= 1
             x = z.right
             self.__rb_transplant(z, z.right)
         elif z.right == self.TNULL:
@@ -307,6 +362,8 @@ class RBT(object):
             y = self.minimum(z.right)
             y_original_colour = y.colour
             x = y.right
+
+            self.comparisons += 1
             if y.parent == z:
                 x.parent = y
             else:
@@ -318,21 +375,30 @@ class RBT(object):
             y.left = z.left
             y.left.parent = y
             y.colour = z.colour
+
+        self.comparisons += 1
         if y_original_colour == 0:
             self.__fix_delete(x)
 
     def minimum(self, node):
+        self.comparisons += 1
         while node.left != self.TNULL:
             node = node.left
+            self.comparisons += 1
         return node
 
     def maximum(self, node):
+        self.comparisons += 1
         while node.right != self.TNULL:
             node = node.right
+            self.comparisons += 1
         return node
 
     def __rb_transplant(self, u, v):
+
+        self.comparisons += 2
         if u.parent is None:
+            self.comparisons -= 1
             self.root = v
         elif u == u.parent.left:
             u.parent.left = v
@@ -341,8 +407,12 @@ class RBT(object):
         v.parent = u.parent
 
     def delete(self, *args):
+        self.comparisons += 1
         if type(args[0]) == list:  # otherwise it is given as a tuple
             args = args[0]
+
+        self.comparisons += 1
         for key in args:
+            self.comparisons += 1
             self.nodes -= 1
             self._delete(self.root, key)
