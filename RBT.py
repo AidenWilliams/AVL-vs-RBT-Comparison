@@ -413,6 +413,6 @@ class RBT(object):
 
         self.comparisons += 1
         for key in args:
-            self.comparisons += 1
             self.nodes -= 1
             self._delete(self.root, key)
+            self.comparisons += 1

@@ -95,6 +95,7 @@ class AVL(object):
 
     def height(self, AVLN: AVLNode):
         h = 0
+        self.comparisons += 1
         if AVLN is not None:
             l_height = self.height(AVLN.left)
             r_height = self.height(AVLN.right)
@@ -110,10 +111,12 @@ class AVL(object):
 
     def _insert(self, AVLN, key):
         # Standard BST insertion
+        self.comparisons += 1
         if AVLN is None:
             self.nodes += 1
             return AVLNode(key)
 
+        self.comparisons += 1
         if key < AVLN.key:
             AVLN.left = self._insert(AVLN.left, key)
         else:
@@ -122,16 +125,20 @@ class AVL(object):
         # Balancing
         balance = self.getBalance(AVLN)
 
+        self.comparisons += 2
         if balance > 1 and key < AVLN.left.key:
             return self.rightRotate(AVLN)
 
+        self.comparisons += 2
         if balance < -1 and key > AVLN.right.key:
             return self.leftRotate(AVLN)
 
+        self.comparisons += 2
         if balance > 1 and key > AVLN.left.key:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
 
+        self.comparisons += 2
         if balance < -1 and key < AVLN.right.key:
             AVLN.right = self.rightRotate(AVLN.right)
             return self.leftRotate(AVLN)
@@ -139,12 +146,14 @@ class AVL(object):
         return AVLN
 
     def insert(self, key):
+        self.comparisons += 1
         if self.root is None:
             self.root = AVLNode(key)
         else:
             self.root = self._insert(self.root, key)
 
     def getMinValueNode(self, root):
+        self.comparisons += 1
         if root is None or root.left is None:
             return root
 
@@ -153,22 +162,27 @@ class AVL(object):
     def _delete(self, AVLN, key):
 
         # Perform standard BST delete
+        self.comparisons += 3
         if not AVLN:
+            self.comparisons -= 2
             return AVLN
 
         elif key < AVLN.key:
+            self.comparisons -= 1
             AVLN.left = self._delete(AVLN.left, key)
 
         elif key > AVLN.key:
             AVLN.right = self._delete(AVLN.right, key)
 
         else:
+            self.comparisons += 2
             if AVLN.left is None:
                 temp = AVLN.right
                 AVLN = None
                 return temp
 
             elif AVLN.right is None:
+                self.comparisons -= 1
                 temp = AVLN.left
                 AVLN = None
                 return temp
@@ -177,22 +191,27 @@ class AVL(object):
             AVLN.key = temp.key
             AVLN.right = self._delete(AVLN.right, temp.key)
 
+        self.comparisons += 1
         if AVLN is None:
             return AVLN
 
         # Balancing
         balance = self.getBalance(AVLN)
 
+        self.comparisons += 2
         if balance > 1 and self.getBalance(AVLN.left) >= 0:
             return self.rightRotate(AVLN)
 
+        self.comparisons += 2
         if balance < -1 and self.getBalance(AVLN.right) <= 0:
             return self.leftRotate(AVLN)
 
+        self.comparisons += 2
         if balance > 1 and self.getBalance(AVLN.left) < 0:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
 
+        self.comparisons += 2
         if balance < -1 and self.getBalance(AVLN.right) > 0:
             AVLN.right = self.rightRotate(AVLN.right)
             return self.leftRotate(AVLN)
@@ -200,11 +219,14 @@ class AVL(object):
         return AVLN
 
     def delete(self, *args):
+        self.comparisons += 1
         if type(args[0]) == list:  # otherwise it is given as a tuple
             args = args[0]
+        self.comparisons += 1
         for key in args:
             self.nodes -= 1
             self.root = self._delete(self.root, key)
+            self.comparisons += 1
 
     def leftRotate(self, AVLN):
         AVLN1 = AVLN.right
