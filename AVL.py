@@ -132,6 +132,38 @@ class AVL(object):
             h = max_height + 1
         return h
 
+    def leftRotate(self, AVLN: AVLNode):
+        """
+        Rotates the tree starting from AVLNode to the left
+
+        Rotations are explained further in the report.
+
+        :param AVLN: Pivot point for rotation
+        :return: Rotated sub tree
+        """
+        AVLN1 = AVLN.right
+        AVLN2 = AVLN1.left
+        AVLN1.left = AVLN
+        AVLN.right = AVLN2
+        self.rotations += 1
+        return AVLN1
+
+    def rightRotate(self, AVLN: AVLNode):
+        """
+        Rotates the tree starting from AVLNode to the right
+
+        Rotations are explained further in the report.
+
+        :param AVLN: Pivot point for rotation
+        :return: Rotated sub tree
+        """
+        AVLN1 = AVLN.left
+        AVLN2 = AVLN1.right
+        AVLN1.right = AVLN
+        AVLN.left = AVLN2
+        self.rotations += 1
+        return AVLN1
+
     def getBalance(self, AVLN: AVLNode):
         """
         Gets the balance of a sub tree
@@ -170,7 +202,7 @@ class AVL(object):
         # Get balancing
         balance = self.getBalance(AVLN)
 
-        # Balance will be further explained in the report
+        # Balance is further explained in the report
         # Case 1
         self.comparisons += 2
         if balance > 1 and key < AVLN.left.key:
@@ -262,7 +294,7 @@ class AVL(object):
 
         # Balancing
         balance = self.getBalance(AVLN)
-        # Balance will be further explained in the report
+        # Balance is further explained in the report
         # Case 1
         self.comparisons += 2
         if balance > 1 and self.getBalance(AVLN.left) >= 0:
@@ -291,32 +323,6 @@ class AVL(object):
         """
         self.nodes -= 1
         self.root = self._delete(self.root, key)
-
-    def leftRotate(self, AVLN: AVLNode):
-        """
-        Rotates the tree starting from AVLNode to the left
-        :param AVLN: Pivot point for rotation
-        :return: Rotated sub tree
-        """
-        AVLN1 = AVLN.right
-        AVLN2 = AVLN1.left
-        AVLN1.left = AVLN
-        AVLN.right = AVLN2
-        self.rotations += 1
-        return AVLN1
-
-    def rightRotate(self, AVLN: AVLNode):
-        """
-        Rotates the tree starting from AVLNode to the right
-        :param AVLN: Pivot point for rotation
-        :return: Rotated sub tree
-        """
-        AVLN1 = AVLN.left
-        AVLN2 = AVLN1.right
-        AVLN1.right = AVLN
-        AVLN.left = AVLN2
-        self.rotations += 1
-        return AVLN1
 
     def search(self, key, AVLN: AVLNode):
         """

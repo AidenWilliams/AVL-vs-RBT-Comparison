@@ -19,6 +19,11 @@ class RBTNode(object):
         self.colour = colour
 
     def __str__(self, node=None):
+        """
+        Pretty prints the tree. Text colour represents the node colour
+        :param node: current node in traversal
+        :return: node in a pretty string format
+        """
         if node is None:
             return '\n'.join(self.__str__(self))
         strings = []
@@ -33,6 +38,11 @@ class RBTNode(object):
         return strings
 
     def traverse_infix(self, result=None):
+        """
+        Infix traversal of the tree
+        :param result: tree in infix so far
+        :return: a list of nodes of the tree, in infix
+        """
         if result is None:
             result = []
 
@@ -47,6 +57,11 @@ class RBTNode(object):
         return result
 
     def traverse_prefix(self, result=None):
+        """
+        Prefix traversal of the tree
+        :param result: tree in prefix so far
+        :return: a list of nodes of the tree, in prefix
+        """
         if result is None:
             result = []
 
@@ -61,6 +76,11 @@ class RBTNode(object):
         return result
 
     def traverse_postfix(self, result=None):
+        """
+        Postfix traversal of the tree
+        :param result: tree in postfix so far
+        :return: a list of nodes of the tree, in postfix
+        """
         if result is None:
             result = []
 
@@ -94,14 +114,24 @@ class RBT(object):
         self.nodes = 0
         self.comparisons = 0
 
-    def __str__(self, TN=None):
-        if TN is None:
+    def __str__(self, RBTN=None):
+        """
+        Starts pretty print process
+        :param RBTN: Node from which
+        :return: pretty print of the tree
+        """
+        if RBTN is None:
             if self.root is None:
                 return 'root -> None'
             else:
                 return '\n'.join(self.root.__str__(self.root))
 
     def height(self, RBTN: RBTNode):
+        """
+        Gets height of RBTN i.e. distance from it to the deepest node in its sub tree.
+        :param RBTN: Starting Node
+        :return: height
+        """
         h = 0
         self.comparisons += 1
         if RBTN is not None:
@@ -112,6 +142,14 @@ class RBT(object):
         return h
 
     def LeftRotate(self, x):
+        """
+        Rotates the tree starting from x to the left
+
+        Rotations are explained further in the report.
+
+        :param x: Pivot point for rotation
+        :return: Rotated sub tree
+        """
         self.comparisons += 1
         if x is None:
             raise Exception("x cannot be None")
@@ -135,6 +173,14 @@ class RBT(object):
         self.rotations += 1
 
     def RightRotate(self, x):
+        """
+        Rotates the tree starting from x to the right.
+
+        Rotations are explained further in the report.
+
+        :param x: Pivot point for rotation
+        :return: Rotated sub tree
+        """
         self.comparisons += 1
         if x is None:
             raise Exception("x cannot be None")
@@ -157,48 +203,53 @@ class RBT(object):
         x.parent = y
         self.rotations += 1
 
-    def _insertFix(self, key):
+    def _insertFix(self, RBTN: RBTNode):
+        """
+        Helper function used to fix insertion
+        :param RBTN: Node that is being checked for fixing
+        :return:
+        """
         self.comparisons += 1
-        while key.parent.colour == 1:
+        while RBTN.parent.colour == 1:
             self.comparisons += 1
-            if key.parent == key.parent.parent.right:
-                u = key.parent.parent.left  # uncle
+            if RBTN.parent == RBTN.parent.parent.right:
+                u = RBTN.parent.parent.left  # uncle
                 self.comparisons += 1
                 if u.colour == 1:
                     u.colour = 0
-                    key.parent.colour = 0
-                    key.parent.parent.colour = 1
-                    key = key.parent.parent
+                    RBTN.parent.colour = 0
+                    RBTN.parent.parent.colour = 1
+                    RBTN = RBTN.parent.parent
                 else:
                     self.comparisons += 1
-                    if key == key.parent.left:
-                        key = key.parent
-                        self.RightRotate(key)
-                    key.parent.colour = 0
-                    key.parent.parent.colour = 1
-                    self.LeftRotate(key.parent.parent)
+                    if RBTN == RBTN.parent.left:
+                        RBTN = RBTN.parent
+                        self.RightRotate(RBTN)
+                    RBTN.parent.colour = 0
+                    RBTN.parent.parent.colour = 1
+                    self.LeftRotate(RBTN.parent.parent)
             else:
-                u = key.parent.parent.right  # uncle
+                u = RBTN.parent.parent.right  # uncle
 
                 self.comparisons += 1
                 if u.colour == 1:
                     # mirror case 3.1
                     u.colour = 0
-                    key.parent.colour = 0
-                    key.parent.parent.colour = 1
-                    key = key.parent.parent
+                    RBTN.parent.colour = 0
+                    RBTN.parent.parent.colour = 1
+                    RBTN = RBTN.parent.parent
                 else:
                     self.comparisons += 1
-                    if key == key.parent.right:
+                    if RBTN == RBTN.parent.right:
                         # mirror case 3.2.2
-                        key = key.parent
-                        self.LeftRotate(key)
+                        RBTN = RBTN.parent
+                        self.LeftRotate(RBTN)
                     # mirror case 3.2.1
-                    key.parent.colour = 0
-                    key.parent.parent.colour = 1
-                    self.RightRotate(key.parent.parent)
+                    RBTN.parent.colour = 0
+                    RBTN.parent.parent.colour = 1
+                    self.RightRotate(RBTN.parent.parent)
             self.comparisons += 1
-            if key == self.root:
+            if RBTN == self.root:
                 break
 
             self.comparisons += 1
@@ -212,7 +263,8 @@ class RBT(object):
         node.key = key
         node.left = self.TNULL
         node.right = self.TNULL
-        node.colour = 1  # new node must be red
+        # new node must be red
+        node.colour = 1
 
         y = None
         x = self.root
@@ -330,7 +382,7 @@ class RBT(object):
             self.comparisons += 1
         x.colour = 0
 
-    def _delete(self, node, key):
+    def _delete(self, node, key, verbose=False):
         # find the node containing key
         z = self.TNULL
         self.comparisons += 1
@@ -350,7 +402,8 @@ class RBT(object):
 
         self.comparisons += 1
         if z == self.TNULL:
-            #print("Couldn't find key in the tree")
+            if verbose:
+                print("Couldn't find key in the tree")
             return
 
         y = z
@@ -366,7 +419,7 @@ class RBT(object):
             x = z.left
             self.__rb_transplant(z, z.left)
         else:
-            y = self.minimum(z.right)
+            y = self.getMinValueNode(z.right)
             y_original_colour = y.colour
             x = y.right
 
@@ -387,22 +440,19 @@ class RBT(object):
         if y_original_colour == 0:
             self.__fix_delete(x)
 
-    def minimum(self, node):
+    def getMinValueNode(self, root: RBTNode):
+        """
+        Finds the node with smallest key for a sub tree starting in root
+        :param root: root of sub tree
+        :return: AVLNode with smallest key value
+        """
         self.comparisons += 1
-        while node.left != self.TNULL:
-            node = node.left
-            self.comparisons += 1
-        return node
+        if root is None or root.left is None:
+            return root
 
-    def maximum(self, node):
-        self.comparisons += 1
-        while node.right != self.TNULL:
-            node = node.right
-            self.comparisons += 1
-        return node
+        return self.getMinValueNode(root.left)
 
     def __rb_transplant(self, u, v):
-
         self.comparisons += 2
         if u.parent is None:
             self.comparisons -= 1
@@ -418,17 +468,23 @@ class RBT(object):
         self.nodes -= 1
         self._delete(self.root, key)
 
-    def search(self, key, node):
+    def search(self, key, RBTN):
+        """
+        Searches for node with key as its key value
+        :param key: key value of the node that needs to be found
+        :param RBTN: root of current sub tree
+        :return: AVLNode with key as its key
+        """
         self.comparisons += 1
-        if node is None:
+        if RBTN is None:
             return None
 
         self.comparisons += 3
-        if node.key == key:
+        if RBTN.key == key:
             self.comparisons -= 2
-            return node
-        elif node.key > key:
+            return RBTN
+        elif RBTN.key > key:
             self.comparisons -= 1
-            return self.search(key, node.right)
+            return self.search(key, RBTN.right)
         else:
-            return self.search(key, node.left)
+            return self.search(key, RBTN.left)
