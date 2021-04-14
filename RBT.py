@@ -5,7 +5,7 @@ class RBTNode(object):
     Based on a basic node object with the addition of the colour of the node as well as a reference of the parent.
     A reference is kept to make fixing the double red mistake easier to fix.
 
-    A string function is provided for clean printing of the tree. - Credit guy
+    A string function is provided for nice printing of the tree. - Credit guy
 
     Infix, postfix and prefix is traversing is also provided.
     """
@@ -96,13 +96,10 @@ class RBT(object):
 
     def __str__(self, TN=None):
         if TN is None:
-            if self.is_empty():
+            if self.root is None:
                 return 'root -> None'
             else:
                 return '\n'.join(self.root.__str__(self.root))
-
-    def is_empty(self):
-        return self.root is None
 
     def height(self, RBTN: RBTNode):
         h = 0

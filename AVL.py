@@ -4,7 +4,7 @@ class AVLNode(object):
 
     AVLNode is a basic node object with a key and 2 children.
 
-    A string function is provided for clean printing of the tree. - Credit guy
+    A string function is provided for nice printing of the tree.
 
     Infix, postfix and prefix is traversing is also provided.
     """
@@ -16,6 +16,11 @@ class AVLNode(object):
         self.right = right_child
 
     def __str__(self, node=None):
+        """
+        Pretty prints the tree.
+        :param node: current node in traversal
+        :return: node in a pretty string format
+        """
         if node is None:
             return '\n'.join(self.__str__(self))
         strings = []
@@ -29,6 +34,11 @@ class AVLNode(object):
         return strings
 
     def traverse_infix(self, result=None):
+        """
+        Infix traversal of the tree
+        :param result: tree in infix so far
+        :return: a list of nodes of the tree, in infix
+        """
         if result is None:
             result = []
 
@@ -43,6 +53,11 @@ class AVLNode(object):
         return result
 
     def traverse_prefix(self, result=None):
+        """
+        Prefix traversal of the tree
+        :param result: tree in prefix so far
+        :return: a list of nodes of the tree, in prefix
+        """
         if result is None:
             result = []
 
@@ -57,6 +72,11 @@ class AVLNode(object):
         return result
 
     def traverse_postfix(self, result=None):
+        """
+        Postfix traversal of the tree
+        :param result: tree in postfix so far
+        :return: a list of nodes of the tree, in postfix
+        """
         if result is None:
             result = []
 
@@ -84,14 +104,17 @@ class AVL(object):
         self.comparisons = 0
 
     def __str__(self, AVLN=None):
+        """
+        Starts pretty print process
+        :param AVLN: Node from which
+        :return: pretty print of the tree
+        """
         if AVLN is None:
-            if self.is_empty():
+            if self.root is None:
                 return 'root -> None'
             else:
                 return '\n'.join(self.root.__str__(self.root))
 
-    def is_empty(self):
-        return self.root is None
 
     def height(self, AVLN: AVLNode):
         h = 0
