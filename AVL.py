@@ -218,15 +218,9 @@ class AVL(object):
 
         return AVLN
 
-    def delete(self, *args):
-        self.comparisons += 1
-        if type(args[0]) == list:  # otherwise it is given as a tuple
-            args = args[0]
-        self.comparisons += 1
-        for key in args:
-            self.nodes -= 1
-            self.root = self._delete(self.root, key)
-            self.comparisons += 1
+    def delete(self, key):
+        self.nodes -= 1
+        self.root = self._delete(self.root, key)
 
     def leftRotate(self, AVLN):
         AVLN1 = AVLN.right

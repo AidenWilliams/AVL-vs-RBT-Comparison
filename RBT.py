@@ -104,6 +104,16 @@ class RBT(object):
     def is_empty(self):
         return self.root is None
 
+    def height(self, RBTN: RBTNode):
+        h = 0
+        self.comparisons += 1
+        if RBTN is not None:
+            l_height = self.height(RBTN.left)
+            r_height = self.height(RBTN.right)
+            max_height = max(l_height, r_height)
+            h = max_height + 1
+        return h
+
     def LeftRotate(self, x):
         self.comparisons += 1
         if x is None:
@@ -406,13 +416,7 @@ class RBT(object):
             u.parent.right = v
         v.parent = u.parent
 
-    def delete(self, *args):
+    def delete(self, key):
         self.comparisons += 1
-        if type(args[0]) == list:  # otherwise it is given as a tuple
-            args = args[0]
-
-        self.comparisons += 1
-        for key in args:
-            self.nodes -= 1
-            self._delete(self.root, key)
-            self.comparisons += 1
+        self.nodes -= 1
+        self._delete(self.root, key)
