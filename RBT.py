@@ -343,7 +343,7 @@ class RBT(object):
 
         self.comparisons += 1
         if z == self.TNULL:
-            print("Couldn't find key in the tree")
+            #print("Couldn't find key in the tree")
             return
 
         y = z
