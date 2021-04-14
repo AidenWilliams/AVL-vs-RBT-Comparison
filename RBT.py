@@ -420,3 +420,18 @@ class RBT(object):
         self.comparisons += 1
         self.nodes -= 1
         self._delete(self.root, key)
+
+    def search(self, key, node=None):
+        self.comparisons += 1
+        if node is None:
+            node = self.root
+
+        self.comparisons += 3
+        if node.key == key:
+            self.comparisons -= 2
+            return node
+        elif node.key > key:
+            self.comparisons -= 1
+            return self.search(key, node.right)
+        else:
+            return self.search(key, node.left)
