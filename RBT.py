@@ -419,7 +419,7 @@ class RBT(object):
             x = z.left
             self.__rb_transplant(z, z.left)
         else:
-            y = self.getMinValueNode(z.right)
+            y = self.minimum(z.right)
             y_original_colour = y.colour
             x = y.right
 
@@ -440,17 +440,12 @@ class RBT(object):
         if y_original_colour == 0:
             self.__fix_delete(x)
 
-    def getMinValueNode(self, root: RBTNode):
-        """
-        Finds the node with smallest key for a sub tree starting in root
-        :param root: root of sub tree
-        :return: AVLNode with smallest key value
-        """
+    def minimum(self, node):
         self.comparisons += 1
-        if root is None or root.left is None:
-            return root
-
-        return self.getMinValueNode(root.left)
+        while node.left != self.TNULL:
+            node = node.left
+            self.comparisons += 1
+        return node
 
     def __rb_transplant(self, u, v):
         self.comparisons += 2
