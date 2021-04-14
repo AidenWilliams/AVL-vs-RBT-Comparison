@@ -8,6 +8,7 @@ class AVLNode(object):
 
     Infix, postfix and prefix is traversing is also provided.
     """
+
     def __init__(self, key, left_child=None, right_child=None):
         # key/data/value of the node
         self.key = key
@@ -97,6 +98,7 @@ class AVL(object):
 
     rotation, node and comparison counts are kept for tree comparison
     """
+
     def __init__(self):
         self.root = None
         self.rotations = 0
@@ -115,8 +117,12 @@ class AVL(object):
             else:
                 return '\n'.join(self.root.__str__(self.root))
 
-
     def height(self, AVLN: AVLNode):
+        """
+        Gets height of AVLN i.e. distance from it to the deepest node in its sub tree.
+        :param AVLN: Starting Node
+        :return: height
+        """
         h = 0
         self.comparisons += 1
         if AVLN is not None:
@@ -127,12 +133,28 @@ class AVL(object):
         return h
 
     def getBalance(self, AVLN: AVLNode):
-        if not AVLN:
+        """
+        Gets the balance of a sub tree
+        :param AVLN: root of sub tree
+        :return: balance: 0 if equal, negative if right sub tree is larger
+        """
+        if AVLN is None:
             return 0
 
         return self.height(AVLN.left) - self.height(AVLN.right)
 
-    def _insert(self, AVLN, key):
+    def _insert(self, AVLN: AVLNode, key):
+        """
+        Find appropriate location for key and then inserts it as a new AVLNode as a child for AVLN. Balancing is done
+        after insertion.
+
+        This function acts as a helper function to insert()
+
+        :param AVLN: Would be parent of new node
+        :param key: key value of new node
+        :return: A balanced AVL Tree with key inserted as new AVLNode
+        """
+
         # Standard BST insertion
         self.comparisons += 1
         if AVLN is None:
@@ -145,22 +167,24 @@ class AVL(object):
         else:
             AVLN.right = self._insert(AVLN.right, key)
 
-        # Balancing
+        # Get balancing
         balance = self.getBalance(AVLN)
 
+        # Balance will be further explained in the report
+        # Case 1
         self.comparisons += 2
         if balance > 1 and key < AVLN.left.key:
             return self.rightRotate(AVLN)
-
+        # Case 2
         self.comparisons += 2
         if balance < -1 and key > AVLN.right.key:
             return self.leftRotate(AVLN)
-
+        # Case 3
         self.comparisons += 2
         if balance > 1 and key > AVLN.left.key:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
-
+        # Case 4
         self.comparisons += 2
         if balance < -1 and key < AVLN.right.key:
             AVLN.right = self.rightRotate(AVLN.right)
@@ -169,24 +193,42 @@ class AVL(object):
         return AVLN
 
     def insert(self, key):
+        """
+        Inserts key as an AVLNode in the tree
+        :param key: key value of new node
+        """
         self.comparisons += 1
         if self.root is None:
             self.root = AVLNode(key)
         else:
             self.root = self._insert(self.root, key)
 
-    def getMinValueNode(self, root):
+    def getMinValueNode(self, root: AVLNode):
+        """
+        Finds the node with smallest key for a sub tree starting in root
+        :param root: root of sub tree
+        :return: AVLNode with smallest key value
+        """
         self.comparisons += 1
         if root is None or root.left is None:
             return root
 
         return self.getMinValueNode(root.left)
 
-    def _delete(self, AVLN, key):
+    def _delete(self, AVLN: AVLNode, key):
+        """
+        Finds AVLNode with key as its key and deletes it. Balancing is done after deletion.
+
+        This function acts as a helper function to delete()
+
+        :param AVLN: Parent of the deleted node
+        :param key: key value of the node that needs to be deleted
+        :return: A balanced AVL Tree with node with key as its key removed
+        """
 
         # Perform standard BST delete
         self.comparisons += 3
-        if not AVLN:
+        if AVLN is None:
             self.comparisons -= 2
             return AVLN
 
@@ -220,20 +262,21 @@ class AVL(object):
 
         # Balancing
         balance = self.getBalance(AVLN)
-
+        # Balance will be further explained in the report
+        # Case 1
         self.comparisons += 2
         if balance > 1 and self.getBalance(AVLN.left) >= 0:
             return self.rightRotate(AVLN)
-
+        # Case 2
         self.comparisons += 2
         if balance < -1 and self.getBalance(AVLN.right) <= 0:
             return self.leftRotate(AVLN)
-
+        # Case 3
         self.comparisons += 2
         if balance > 1 and self.getBalance(AVLN.left) < 0:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
-
+        # Case 4
         self.comparisons += 2
         if balance < -1 and self.getBalance(AVLN.right) > 0:
             AVLN.right = self.rightRotate(AVLN.right)
@@ -242,10 +285,19 @@ class AVL(object):
         return AVLN
 
     def delete(self, key):
+        """
+        Deletes the node with key from the tree
+        :param key: key value of the node that needs to be deleted
+        """
         self.nodes -= 1
         self.root = self._delete(self.root, key)
 
-    def leftRotate(self, AVLN):
+    def leftRotate(self, AVLN: AVLNode):
+        """
+        Rotates the tree starting from AVLNode to the left
+        :param AVLN: Pivot point for rotation
+        :return: Rotated sub tree
+        """
         AVLN1 = AVLN.right
         AVLN2 = AVLN1.left
         AVLN1.left = AVLN
@@ -253,7 +305,12 @@ class AVL(object):
         self.rotations += 1
         return AVLN1
 
-    def rightRotate(self, AVLN):
+    def rightRotate(self, AVLN: AVLNode):
+        """
+        Rotates the tree starting from AVLNode to the right
+        :param AVLN: Pivot point for rotation
+        :return: Rotated sub tree
+        """
         AVLN1 = AVLN.left
         AVLN2 = AVLN1.right
         AVLN1.right = AVLN
@@ -261,18 +318,23 @@ class AVL(object):
         self.rotations += 1
         return AVLN1
 
-    def search(self, key, node):
+    def search(self, key, AVLN: AVLNode):
+        """
+        Searches for node with key as its key value
+        :param key: key value of the node that needs to be found
+        :param AVLN: root of current sub tree
+        :return: AVLNode with key as its key
+        """
         self.comparisons += 1
-        if node is None:
+        if AVLN is None:
             return None
 
         self.comparisons += 3
-        if node.key == key:
+        if AVLN.key == key:
             self.comparisons -= 2
-            return node
-        elif node.key > key:
+            return AVLN
+        elif AVLN.key > key:
             self.comparisons -= 1
-            return self.search(key, node.right)
+            return self.search(key, AVLN.right)
         else:
-            return self.search(key, node.left)
-
+            return self.search(key, AVLN.left)
