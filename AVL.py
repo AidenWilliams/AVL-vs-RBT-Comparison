@@ -141,12 +141,12 @@ class AVL(object):
         :param AVLN: Pivot point for rotation
         :return: Rotated sub tree
         """
-        AVLN1 = AVLN.right
-        AVLN2 = AVLN1.left
-        AVLN1.left = AVLN
-        AVLN.right = AVLN2
+        AVLNR = AVLN.right
+        AVLNL = AVLNR.left
+        AVLNR.left = AVLN
+        AVLN.right = AVLNL
         self.rotations += 1
-        return AVLN1
+        return AVLNR
 
     def rightRotate(self, AVLN: AVLNode):
         """
@@ -157,12 +157,12 @@ class AVL(object):
         :param AVLN: Pivot point for rotation
         :return: Rotated sub tree
         """
-        AVLN1 = AVLN.left
-        AVLN2 = AVLN1.right
-        AVLN1.right = AVLN
-        AVLN.left = AVLN2
+        AVLNL = AVLN.left
+        AVLNR = AVLNL.right
+        AVLNL.right = AVLN
+        AVLN.left = AVLNR
         self.rotations += 1
-        return AVLN1
+        return AVLNL
 
     def getBalance(self, AVLN: AVLNode):
         """
@@ -200,25 +200,25 @@ class AVL(object):
             AVLN.right = self._insert(AVLN.right, key)
 
         # Get balancing
-        balance = self.getBalance(AVLN)
+        bf = self.getBalance(AVLN)
 
         # Balance is further explained in the report
         # Case 1
         self.comparisons += 2
-        if balance > 1 and key < AVLN.left.key:
+        if bf > 1 and key < AVLN.left.key:
             return self.rightRotate(AVLN)
         # Case 2
         self.comparisons += 2
-        if balance < -1 and key > AVLN.right.key:
+        if bf < -1 and key > AVLN.right.key:
             return self.leftRotate(AVLN)
         # Case 3
         self.comparisons += 2
-        if balance > 1 and key > AVLN.left.key:
+        if bf > 1 and key > AVLN.left.key:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
         # Case 4
         self.comparisons += 2
-        if balance < -1 and key < AVLN.right.key:
+        if bf < -1 and key < AVLN.right.key:
             AVLN.right = self.rightRotate(AVLN.right)
             return self.leftRotate(AVLN)
 
@@ -284,33 +284,29 @@ class AVL(object):
                 AVLN = None
                 return temp
 
-            temp = self.getMinValueNode(AVLN.right)
+            temp = self.getMinValueNode(AVLN.left)
             AVLN.key = temp.key
-            AVLN.right = self._delete(AVLN.right, temp.key)
-
-        self.comparisons += 1
-        if AVLN is None:
-            return AVLN
+            AVLN.left = self._delete(AVLN.left, temp.key)
 
         # Balancing
-        balance = self.getBalance(AVLN)
+        bf = self.getBalance(AVLN)
         # Balance is further explained in the report
         # Case 1
         self.comparisons += 2
-        if balance > 1 and self.getBalance(AVLN.left) >= 0:
+        if bf > 1 and self.getBalance(AVLN.left) >= 0:
             return self.rightRotate(AVLN)
         # Case 2
         self.comparisons += 2
-        if balance < -1 and self.getBalance(AVLN.right) <= 0:
+        if bf < -1 and self.getBalance(AVLN.right) <= 0:
             return self.leftRotate(AVLN)
         # Case 3
         self.comparisons += 2
-        if balance > 1 and self.getBalance(AVLN.left) < 0:
+        if bf > 1 and self.getBalance(AVLN.left) < 0:
             AVLN.left = self.leftRotate(AVLN.left)
             return self.rightRotate(AVLN)
         # Case 4
         self.comparisons += 2
-        if balance < -1 and self.getBalance(AVLN.right) > 0:
+        if bf < -1 and self.getBalance(AVLN.right) > 0:
             AVLN.right = self.rightRotate(AVLN.right)
             return self.leftRotate(AVLN)
 
