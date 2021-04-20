@@ -119,8 +119,7 @@ class Node:
 
         tree.comparisons += 3
         if is_black(self.left) and self.left and is_black(self.left.left):
-            tree.rotations += 1
-            self = self.rotateLeft()
+            self = self.move_red_left(tree)
 
         self.left = self.left.delete_min(tree)
 
