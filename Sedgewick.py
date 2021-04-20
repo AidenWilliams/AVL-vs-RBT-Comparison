@@ -122,6 +122,9 @@ class Node:
 class LLRBT:
     def __init__(self):
         self.root = None
+        self.rotations = 0
+        self.nodes = 0
+        self.comparisons = 0
 
     def __str__(self, RBTN=None):
         """
@@ -136,17 +139,23 @@ class LLRBT:
                 return '\n'.join(self.root.__str__(self.root))
 
     def is_empty(self):
+        self.comparisons += 1
         return self.root is None
 
     def search(self, key):
         x = self.root
+        self.comparisons += 1
         while x is not None:
+            self.comparisons += 3
             if key == x.key:
+                self.comparisons -= 2
                 return x.key
             elif key < x.key:
+                self.comparisons -= 1
                 x = x.left
             elif key > x.key:
                 x = x.right
+            self.comparisons += 1
         return None
 
     def insert(self, key):
@@ -155,20 +164,28 @@ class LLRBT:
 
     def _insert(self, h: Node, key):
         if h is None:
+            self.nodes += 1
             return Node(key)
 
+        self.comparisons += 2
         if is_red(h.left) and is_red(h.right):
             h.flipColours()
 
+        self.comparisons += 3
         if key == h.key:
+            self.comparisons -= 2
             print("Key already inserted")
         elif key < h.key:
+            self.comparisons -= 1
             h.left = self._insert(h.left, key)
         else:
             h.right = self._insert(h.right, key)
 
+        self.comparisons += 2
         if is_black(h.left) and is_red(h.right):
             h = h.rotateLeft()
+
+        self.comparisons += 2
         if is_red(h.left) and is_red(h.left.left):
             h = h.rotateRight()
 
@@ -176,16 +193,22 @@ class LLRBT:
 
     def delete(self, key):
         res = self.search(key)
+
+        self.comparisons += 1
         if res is None:
             print("Tree does not contain key '{0}'.\n".format(key))
             return False
 
+        self.comparisons += 2
         if is_black(self.root.left) and is_black(self.root.right):
             self.root.color = RED
 
+        self.comparisons += 1
         if self.root is not None:
+            self.nodes -= 1
             self.root = self._delete(self.root, key)
 
+        self.comparisons += 1
         if not self.is_empty():
             self.root.color = BLACK
 
@@ -195,20 +218,28 @@ class LLRBT:
         """
         assert self.search(key) is not None
 
+        self.comparisons += 1
         if key < h.key:
+            self.comparisons += 2
             if is_black(h.left) and h.left and is_black(h.left.left):
                 h = h.move_red_left()
             h.left = self._delete(h.left, key)
         else:
+
+
+            self.comparisons += 1
             if is_red(h.left):
                 h = h.rotateRight()
 
+            self.comparisons += 2
             if key == h.key and h.right is None:
                 return None
 
+            self.comparisons += 3
             if is_black(h.right) and h.right and is_black(h.right.left):
                 h = h.move_red_right()
 
+            self.comparisons += 1
             if key == h.key:
                 h.key = h.right.min()
                 h.right = h.right.delete_min()
@@ -226,9 +257,11 @@ class LLRBT:
         self.root.color = BLACK
 
     def min(self):
+        self.comparisons += 1
         return None if self.root is None else self.root.min()
 
     def max(self):
+        self.comparisons += 1
         return None if self.root is None else self.root.max()
 
 rbt = LLRBT()
