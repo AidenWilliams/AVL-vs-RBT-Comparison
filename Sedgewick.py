@@ -157,7 +157,7 @@ class LLRBT:
         if h is None:
             return Node(key)
 
-        if is_red(h) and is_red(h):
+        if is_red(h.left) and is_red(h.right):
             h.flipColours()
 
         if key == h.key:
