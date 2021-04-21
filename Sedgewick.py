@@ -19,7 +19,7 @@ class Node:
         self.colour = colour
         self.height = 0
 
-    def __str__(self, node=None):
+    def __str__(self, node=None, notebook=True):
         """
         Pretty prints the tree. Text colour represents the node colour
         :param node: current node in traversal
@@ -32,11 +32,33 @@ class Node:
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
         c = 98 - 7 * node.colour
-        strings.append('-> \033[' + str(c) + 'm ({})\033[00m'.format(repr(node.key)))
+        if not notebook:
+            strings.append('-> \033[' + str(c) + 'm ({})\033[00m'.format(repr(node.key)))
+        else:
+            strings.append('-> ({})'.format(repr(node.key)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
         return strings
+
+    def traverse_infix(self, result=None):
+        """
+        Infix traversal of the tree
+        :param result: tree in infix so far
+        :return: a list of nodes of the tree, in infix
+        """
+        if result is None:
+            result = []
+
+        if self.left:
+            self.left.traverse_infix(result)
+
+        result.append(self.key)
+
+        if self.right:
+            self.right.traverse_infix(result)
+
+        return result
 
     def min(self, tree):
         tree.comparisons += 1
@@ -153,10 +175,9 @@ class LLRBT:
     def __init__(self):
         self.root = None
         self.rotations = 0
-        self.nodes = 0
         self.comparisons = 0
 
-    def __str__(self, RBTN=None):
+    def __str__(self, RBTN=None, notebook=True):
         """
         Starts pretty print process
         :param RBTN: Node from which
@@ -166,7 +187,7 @@ class LLRBT:
             if self.root is None:
                 return 'root -> None'
             else:
-                return '\n'.join(self.root.__str__(self.root))
+                return '\n'.join(self.root.__str__(self.root, notebook))
 
     def is_empty(self):
         self.comparisons += 1
@@ -194,7 +215,6 @@ class LLRBT:
 
     def _insert(self, h: Node, key):
         if h is None:
-            self.nodes += 1
             return Node(key)
 
         self.comparisons += 2
@@ -237,7 +257,6 @@ class LLRBT:
 
         self.comparisons += 1
         if self.root is not None:
-            self.nodes -= 1
             self.root = self._delete(self.root, key)
 
         self.comparisons += 1
@@ -248,7 +267,6 @@ class LLRBT:
         """
         Delete a node with the given key (recursively) from the tree below.
         """
-        assert self.search(key) is not None
 
         self.comparisons += 1
         if key < h.key:
@@ -296,15 +314,16 @@ class LLRBT:
         return None if self.root is None else self.root.max(self)
 
 
-rbt = LLRBT()
-rbt.insert(10)
-rbt.insert(15)
-rbt.insert(20)
-rbt.insert(25)
-rbt.insert(30)
-rbt.insert(35)
-rbt.insert(40)
-rbt.insert(45)
-rbt.delete(40)
-rbt.delete(20)
-print(rbt)
+# rbt = LLRBT()
+# rbt.insert(10)
+# rbt.insert(15)
+# rbt.insert(20)
+# rbt.insert(25)
+# rbt.insert(30)
+# rbt.insert(35)
+# rbt.insert(40)
+# rbt.insert(45)
+# rbt.delete(40)
+# rbt.delete(20)
+
+
