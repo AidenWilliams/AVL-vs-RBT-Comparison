@@ -2,12 +2,12 @@ RED = 1
 BLACK = 0
 
 
-def is_red(h):
+def isRed(h):
     return isinstance(h, Node) and h.colour == RED
 
 
-def is_black(h):
-    return not is_red(h)
+def isBlack(h):
+    return not isRed(h)
 
 
 class Node:
@@ -41,7 +41,7 @@ class Node:
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
         return strings
 
-    def traverse_infix(self, result=None):
+    def traverseInfix(self, result=None):
         """
         Infix traversal of the tree
         :param result: tree in infix so far
@@ -51,12 +51,12 @@ class Node:
             result = []
 
         if self.left:
-            self.left.traverse_infix(result)
+            self.left.traverseInfix(result)
 
         result.append(self.key)
 
         if self.right:
-            self.right.traverse_infix(result)
+            self.right.traverseInfix(result)
 
         return result
 
@@ -68,19 +68,19 @@ class Node:
         tree.comparisons += 1
         return self.key if self.right is None else self.right.max(tree)
 
-    def fix_up(self, tree):
+    def fixUp(self, tree):
         tree.comparisons += 1
-        if is_red(self.right):
+        if isRed(self.right):
             tree.rotations += 1
             self = self.rotateLeft()
 
         tree.comparisons += 2
-        if is_red(self.left) and self.left and is_red(self.left.left):
+        if isRed(self.left) and self.left and isRed(self.left.left):
             tree.rotations += 1
             self = self.rotateRight()
 
         tree.comparisons += 2
-        if is_red(self.left) and is_red(self.right):
+        if isRed(self.left) and isRed(self.right):
             self.flipColours(tree)
 
         return self.setHeight()
@@ -115,41 +115,41 @@ class Node:
         self.colour = 1
         return x
 
-    def move_red_left(self, tree):
+    def moveRedLeft(self, tree):
         self.flipColours(tree)
         tree.comparisons += 2
-        if self.right and is_red(self.right.left):
+        if self.right and isRed(self.right.left):
             tree.rotations += 2
             self.right = self.right.rotateRight()
             self = self.rotateLeft()
             self.flipColours(tree)
         return self
 
-    def move_red_right(self, tree):
+    def moveRedRight(self, tree):
         self.flipColours(tree)
         tree.comparisons += 2
-        if self.left and is_red(self.left.left):
+        if self.left and isRed(self.left.left):
             tree.rotations += 1
             self = self.rotateRight()
             self.flipColours(tree)
         return self
 
-    def delete_min(self, tree):
+    def deleteMin(self, tree):
         tree.comparisons += 1
         if self.left is None:
             return None
 
         tree.comparisons += 3
-        if is_black(self.left) and self.left and is_black(self.left.left):
-            self = self.move_red_left(tree)
+        if isBlack(self.left) and self.left and isBlack(self.left.left):
+            self = self.moveRedLeft(tree)
 
-        self.left = self.left.delete_min(tree)
+        self.left = self.left.deleteMin(tree)
 
-        return self.fix_up(tree)
+        return self.fixUp(tree)
 
-    def delete_max(self, tree):
+    def deleteMax(self, tree):
         tree.comparisons += 1
-        if is_red(self.left):
+        if isRed(self.left):
             tree.rotations += 1
             self = self.rotateRight()
 
@@ -158,12 +158,12 @@ class Node:
             return None
 
         tree.comparisons += 3
-        if is_black(self.right) and self.right and is_black(self.right.left):
-            self = self.move_red_right(tree)
+        if isBlack(self.right) and self.right and isBlack(self.right.left):
+            self = self.moveRedRight(tree)
 
-        self.right = self.right.delete_max(tree)
+        self.right = self.right.deleteMax(tree)
 
-        return self.fix_up(tree)
+        return self.fixUp(tree)
 
     def setHeight(self):
         self.height = 1 + max(self.left and self.left.height or 0,
@@ -189,8 +189,7 @@ class LLRBT:
             else:
                 return '\n'.join(self.root.__str__(self.root, notebook))
 
-    def is_empty(self):
-        self.comparisons += 1
+    def isEmpty(self):
         return self.root is None
 
     def search(self, key):
@@ -218,7 +217,7 @@ class LLRBT:
             return Node(key)
 
         self.comparisons += 2
-        if is_red(h.left) and is_red(h.right):
+        if isRed(h.left) and isRed(h.right):
             h.flipColours(self)
 
         self.comparisons += 3
@@ -232,12 +231,12 @@ class LLRBT:
             h.right = self._insert(h.right, key)
 
         self.comparisons += 2
-        if is_black(h.left) and is_red(h.right):
+        if isBlack(h.left) and isRed(h.right):
             self.rotations += 1
             h = h.rotateLeft()
 
         self.comparisons += 2
-        if is_red(h.left) and is_red(h.left.left):
+        if isRed(h.left) and isRed(h.left.left):
             self.rotations += 1
             h = h.rotateRight()
 
@@ -252,7 +251,7 @@ class LLRBT:
             return False
 
         self.comparisons += 2
-        if is_black(self.root.left) and is_black(self.root.right):
+        if isBlack(self.root.left) and isBlack(self.root.right):
             self.root.color = RED
 
         self.comparisons += 1
@@ -260,7 +259,7 @@ class LLRBT:
             self.root = self._delete(self.root, key)
 
         self.comparisons += 1
-        if not self.is_empty():
+        if not self.isEmpty():
             self.root.color = BLACK
 
     def _delete(self, h, key):
@@ -271,13 +270,13 @@ class LLRBT:
         self.comparisons += 1
         if key < h.key:
             self.comparisons += 2
-            if is_black(h.left) and h.left and is_black(h.left.left):
-                h = h.move_red_left(self)
+            if isBlack(h.left) and h.left and isBlack(h.left.left):
+                h = h.moveRedLeft(self)
             h.left = self._delete(h.left, key)
         else:
 
             self.comparisons += 1
-            if is_red(h.left):
+            if isRed(h.left):
                 h = h.rotateRight()
 
             self.comparisons += 2
@@ -285,24 +284,24 @@ class LLRBT:
                 return None
 
             self.comparisons += 3
-            if is_black(h.right) and h.right and is_black(h.right.left):
-                h = h.move_red_right(self)
+            if isBlack(h.right) and h.right and isBlack(h.right.left):
+                h = h.moveRedRight(self)
 
             self.comparisons += 1
             if key == h.key:
                 h.key = h.right.min(self)
-                h.right = h.right.delete_min(self)
+                h.right = h.right.deleteMin(self)
             else:
                 h.right = self._delete(h.right, key)
 
-        return h.fix_up(self)
+        return h.fixUp(self)
 
-    def delete_min(self):
-        self.root = self.root.delete_min(self)
+    def deleteMin(self):
+        self.root = self.root.deleteMin(self)
         self.root.color = BLACK
 
-    def delete_max(self):
-        self.root = self.root.delete_max(self)
+    def deleteMax(self):
+        self.root = self.root.deleteMax(self)
         self.root.color = BLACK
 
     def min(self):

@@ -34,7 +34,7 @@ class AVLNode(object):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
         return strings
 
-    def traverse_infix(self, result=None):
+    def traverseInfix(self, result=None):
         """
         Infix traversal of the tree
         :param result: tree in infix so far
@@ -44,12 +44,12 @@ class AVLNode(object):
             result = []
 
         if self.left:
-            self.left.traverse_infix(result)
+            self.left.traverseInfix(result)
 
         result.append(self.key)
 
         if self.right:
-            self.right.traverse_infix(result)
+            self.right.traverseInfix(result)
 
         return result
 
@@ -270,6 +270,8 @@ class AVL(object):
             AVLN.right = self._delete(AVLN.right, key)
 
         else:
+            # Found the node
+            # Get the replacement Node
             self.comparisons += 2
             if AVLN.left is None:
                 temp = AVLN.right
