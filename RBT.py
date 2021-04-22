@@ -1,24 +1,25 @@
-class RBTNode(object):
-    """
-    Node class for an RB Tree
+RED = 1
+BLACK = 0
 
-    Based on a basic node object with the addition of the colour of the node as well as a reference of the parent.
-    A reference is kept to make fixing the double red mistake easier to fix.
 
-    A string function is provided for nice printing of the tree. - Credit guy
+def is_red(h):
+    return isinstance(h, Node) and h.colour == RED
 
-    Infix, postfix and prefix is traversing is also provided.
-    """
-    def __init__(self, key=None, left_child=None, right_child=None, parent=None, colour=0):
+
+def is_black(h):
+    return not is_red(h)
+
+
+class Node:
+    def __init__(self, key=None, left_child=None, right_child=None, colour=RED):
         self.key = key
         self.left = left_child
         self.right = right_child
-        # If parent is none then it is root of entire tree
-        self.parent = parent
         # Colour of node 1 is red/ 0 is black
         self.colour = colour
+        self.height = 0
 
-    def __str__(self, node=None):
+    def __str__(self, node=None, notebook=True):
         """
         Pretty prints the tree. Text colour represents the node colour
         :param node: current node in traversal
@@ -31,7 +32,10 @@ class RBTNode(object):
             for right_string in self.__str__(node.right):
                 strings.append(5 * ' ' + right_string.replace('->', '/-', 1))
         c = 98 - 7 * node.colour
-        strings.append('-> \033[' + str(c) + 'm ({})\033[00m'.format(repr(node.key)))
+        if not notebook:
+            strings.append('-> \033[' + str(c) + 'm ({})\033[00m'.format(repr(node.key)))
+        else:
+            strings.append('-> ({})'.format(repr(node.key)))
         if node.left is not None:
             for left_string in self.__str__(node.left):
                 strings.append(5 * ' ' + left_string.replace('->', '\\-', 1))
@@ -56,65 +60,124 @@ class RBTNode(object):
 
         return result
 
-    def traverse_prefix(self, result=None):
-        """
-        Prefix traversal of the tree
-        :param result: tree in prefix so far
-        :return: a list of nodes of the tree, in prefix
-        """
-        if result is None:
-            result = []
+    def min(self, tree):
+        tree.comparisons += 1
+        return self.key if self.left is None else self.left.min(tree)
 
-        result.append(self.key)
+    def max(self, tree):
+        tree.comparisons += 1
+        return self.key if self.right is None else self.right.max(tree)
 
-        if self.left:
-            self.left.traverse_prefix(result)
+    def fix_up(self, tree):
+        tree.comparisons += 1
+        if is_red(self.right):
+            tree.rotations += 1
+            self = self.rotateLeft()
 
-        if self.right:
-            self.right.traverse_prefix(result)
+        tree.comparisons += 2
+        if is_red(self.left) and self.left and is_red(self.left.left):
+            tree.rotations += 1
+            self = self.rotateRight()
 
-        return result
+        tree.comparisons += 2
+        if is_red(self.left) and is_red(self.right):
+            self.flipColours(tree)
 
-    def traverse_postfix(self, result=None):
-        """
-        Postfix traversal of the tree
-        :param result: tree in postfix so far
-        :return: a list of nodes of the tree, in postfix
-        """
-        if result is None:
-            result = []
+        return self.setHeight()
 
-        if self.left:
-            self.left.traverse_postfix(result)
+    def flipColours(self, tree):
+        tree.comparisons += 1
+        self.colour = 0 if self.colour == 1 else 1
 
-        if self.right:
-            self.right.traverse_postfix(result)
+        tree.comparisons += 1
+        if self.left is not None:
+            tree.comparisons += 1
+            self.left.colour = 0 if self.left.colour == 1 else 1
 
-        result.append(self.key)
+        tree.comparisons += 1
+        if self.right is not None:
+            tree.comparisons += 1
+            self.right.colour = 0 if self.right.colour == 1 else 1
 
-        return result
+    def rotateLeft(self):
+        x = self.right
+        self.right = x.left
+        x.left = self
+        x.colour = self.colour
+        self.colour = 1
+        return x
+
+    def rotateRight(self):
+        x = self.left
+        self.left = x.right
+        x.right = self
+        x.colour = self.colour
+        self.colour = 1
+        return x
+
+    def move_red_left(self, tree):
+        self.flipColours(tree)
+        tree.comparisons += 2
+        if self.right and is_red(self.right.left):
+            tree.rotations += 2
+            self.right = self.right.rotateRight()
+            self = self.rotateLeft()
+            self.flipColours(tree)
+        return self
+
+    def move_red_right(self, tree):
+        self.flipColours(tree)
+        tree.comparisons += 2
+        if self.left and is_red(self.left.left):
+            tree.rotations += 1
+            self = self.rotateRight()
+            self.flipColours(tree)
+        return self
+
+    def delete_min(self, tree):
+        tree.comparisons += 1
+        if self.left is None:
+            return None
+
+        tree.comparisons += 3
+        if is_black(self.left) and self.left and is_black(self.left.left):
+            self = self.move_red_left(tree)
+
+        self.left = self.left.delete_min(tree)
+
+        return self.fix_up(tree)
+
+    def delete_max(self, tree):
+        tree.comparisons += 1
+        if is_red(self.left):
+            tree.rotations += 1
+            self = self.rotateRight()
+
+        tree.comparisons += 1
+        if self.right is None:
+            return None
+
+        tree.comparisons += 3
+        if is_black(self.right) and self.right and is_black(self.right.left):
+            self = self.move_red_right(tree)
+
+        self.right = self.right.delete_max(tree)
+
+        return self.fix_up(tree)
+
+    def setHeight(self):
+        self.height = 1 + max(self.left and self.left.height or 0,
+                              self.right and self.right.height or 0)
+        return self
 
 
-class RBT(object):
-    """
-    RB tree class which contains operations that make up and define an RB tree.
-
-    A Null node is kept as TNULL as I found it easier to implement the tree with it as well as it makes for better
-    visualization.
-
-    rotation, node and comparison counts are kept for tree comparison
-    """
+class LLRBT:
     def __init__(self):
-        self.TNULL = RBTNode(0)
-        self.TNULL.colour = 0
-        self.TNULL.left = None
-        self.TNULL.right = None
-        self.root = self.TNULL
+        self.root = None
         self.rotations = 0
-        self.nodes = 0
         self.comparisons = 0
 
-    def __str__(self, RBTN=None):
+    def __str__(self, RBTN=None, notebook=True):
         """
         Starts pretty print process
         :param RBTN: Node from which
@@ -124,362 +187,143 @@ class RBT(object):
             if self.root is None:
                 return 'root -> None'
             else:
-                return '\n'.join(self.root.__str__(self.root))
+                return '\n'.join(self.root.__str__(self.root, notebook))
 
-    def height(self, RBTN: RBTNode):
-        """
-        Gets height of RBTN i.e. distance from it to the deepest node in its sub tree.
-        :param RBTN: Starting Node
-        :return: height
-        """
-        h = 0
+    def is_empty(self):
         self.comparisons += 1
-        if RBTN is not None:
-            l_height = self.height(RBTN.left)
-            r_height = self.height(RBTN.right)
-            max_height = max(l_height, r_height)
-            h = max_height + 1
-        return h
+        return self.root is None
 
-    def LeftRotate(self, x):
-        """
-        Rotates the tree starting from x to the left
-
-        Rotations are explained further in the report.
-
-        :param x: Pivot point for rotation
-        :return: Rotated sub tree
-        """
+    def search(self, key):
+        x = self.root
         self.comparisons += 1
-        if x is None:
-            raise Exception("x cannot be None")
-        y = x.right
-        x.right = y.left
-        self.comparisons += 1
-        if y.left != self.TNULL:
-            y.left.parent = x
-
-        y.parent = x.parent
-        self.comparisons += 2
-        if x.parent is None:
-            self.comparisons -= 1
-            self.root = y
-        elif x == x.parent.left:
-            x.parent.left = y
-        else:
-            x.parent.right = y
-        y.left = x
-        x.parent = y
-        self.rotations += 1
-
-    def RightRotate(self, x):
-        """
-        Rotates the tree starting from x to the right.
-
-        Rotations are explained further in the report.
-
-        :param x: Pivot point for rotation
-        :return: Rotated sub tree
-        """
-        self.comparisons += 1
-        if x is None:
-            raise Exception("x cannot be None")
-        y = x.left
-        x.left = y.right
-        self.comparisons += 1
-        if y.right != self.TNULL:
-            y.right.parent = x
-
-        y.parent = x.parent
-        self.comparisons += 2
-        if x.parent is None:
-            self.comparisons -= 1
-            self.root = y
-        elif x == x.parent.right:
-            x.parent.right = y
-        else:
-            x.parent.left = y
-        y.right = x
-        x.parent = y
-        self.rotations += 1
-
-    def _insertFix(self, RBTN: RBTNode):
-        """
-        Helper function used to fix insertion
-        :param RBTN: Node that is being checked for fixing
-        :return:
-        """
-        self.comparisons += 1
-        while RBTN.parent.colour == 1:
+        while x is not None:
+            self.comparisons += 3
+            if key == x.key:
+                self.comparisons -= 2
+                return x.key
+            elif key < x.key:
+                self.comparisons -= 1
+                x = x.left
+            elif key > x.key:
+                x = x.right
             self.comparisons += 1
-            if RBTN.parent == RBTN.parent.parent.right:
-                u = RBTN.parent.parent.left  # uncle
-                self.comparisons += 1
-                if u.colour == 1:
-                    u.colour = 0
-                    RBTN.parent.colour = 0
-                    RBTN.parent.parent.colour = 1
-                    RBTN = RBTN.parent.parent
-                else:
-                    self.comparisons += 1
-                    if RBTN == RBTN.parent.left:
-                        RBTN = RBTN.parent
-                        self.RightRotate(RBTN)
-                    RBTN.parent.colour = 0
-                    RBTN.parent.parent.colour = 1
-                    self.LeftRotate(RBTN.parent.parent)
-            else:
-                u = RBTN.parent.parent.right  # uncle
-
-                self.comparisons += 1
-                if u.colour == 1:
-                    # mirror case 3.1
-                    u.colour = 0
-                    RBTN.parent.colour = 0
-                    RBTN.parent.parent.colour = 1
-                    RBTN = RBTN.parent.parent
-                else:
-                    self.comparisons += 1
-                    if RBTN == RBTN.parent.right:
-                        # mirror case 3.2.2
-                        RBTN = RBTN.parent
-                        self.LeftRotate(RBTN)
-                    # mirror case 3.2.1
-                    RBTN.parent.colour = 0
-                    RBTN.parent.parent.colour = 1
-                    self.RightRotate(RBTN.parent.parent)
-            self.comparisons += 1
-            if RBTN == self.root:
-                break
-
-            self.comparisons += 1
-        self.root.colour = 0
+        return None
 
     def insert(self, key):
-        self.nodes += 1
-        # Ordinary Binary Search Insertion
-        node = RBTNode(key)
-        node.parent = None
-        node.key = key
-        node.left = self.TNULL
-        node.right = self.TNULL
-        # new node must be red
-        node.colour = 1
+        self.root = self._insert(self.root, key)
+        self.root.colour = 0
 
-        y = None
-        x = self.root
-
-        self.comparisons += 1
-        while x != self.TNULL:
-            y = x
-
-            self.comparisons += 1
-            if node.key < x.key:
-                x = x.left
-            else:
-                x = x.right
-
-            self.comparisons += 1
-
-        # y is parent of x
-        node.parent = y
+    def _insert(self, h: Node, key):
+        if h is None:
+            return Node(key)
 
         self.comparisons += 2
-        if y is None:
-
-            self.comparisons -= 1
-            self.root = node
-        elif node.key < y.key:
-            y.left = node
-        else:
-            y.right = node
-
-        # if new node is a root node, simply return
-        self.comparisons += 1
-        if node.parent is None:
-            node.colour = 0
-            return
-
-        # if the grandparent is None, simply return
-        self.comparisons += 1
-        if node.parent.parent is None:
-            return
-
-        # Fix the tree
-        self._insertFix(node)
-
-    def __fix_delete(self, x):
-
-        self.comparisons += 1
-        while x != self.root and x.colour == 0:
-
-            self.comparisons += 1
-            if x == x.parent.left:
-                s = x.parent.right
-
-                self.comparisons += 1
-                if s.colour == 1:
-                    # case 3.1
-                    s.colour = 0
-                    x.parent.colour = 1
-                    self.LeftRotate(x.parent)
-                    s = x.parent.right
-
-                self.comparisons += 2
-                if s.left.colour == 0 and s.right.colour == 0:
-                    # case 3.2
-                    s.colour = 1
-                    x = x.parent
-                else:
-
-                    self.comparisons += 1
-                    if s.right.colour == 0:
-                        # case 3.3
-                        s.left.colour = 0
-                        s.colour = 1
-                        self.RightRotate(s)
-                        s = x.parent.right
-
-                    # case 3.4
-                    s.colour = x.parent.colour
-                    x.parent.colour = 0
-                    s.right.colour = 0
-                    self.LeftRotate(x.parent)
-                    x = self.root
-            else:
-                s = x.parent.left
-
-                self.comparisons += 1
-                if s.colour == 1:
-                    # case 3.1
-                    s.colour = 0
-                    x.parent.colour = 1
-                    self.RightRotate(x.parent)
-                    s = x.parent.left
-
-                self.comparisons += 2
-                if s.left.colour == 0 and s.right.colour == 0:
-                    # case 3.2
-                    s.colour = 1
-                    x = x.parent
-                else:
-
-                    self.comparisons += 1
-                    if s.left.colour == 0:
-                        # case 3.3
-                        s.right.colour = 0
-                        s.colour = 1
-                        self.LeftRotate(s)
-                        s = x.parent.left
-
-                    # case 3.4
-                    s.colour = x.parent.colour
-                    x.parent.colour = 0
-                    s.left.colour = 0
-                    self.RightRotate(x.parent)
-                    x = self.root
-
-            self.comparisons += 1
-        x.colour = 0
-
-    def _delete(self, node, key, verbose=False):
-        # find the node containing key
-        z = self.TNULL
-        self.comparisons += 1
-        while node != self.TNULL:
-
-            self.comparisons += 1
-            if node.key == key:
-                z = node
-
-            self.comparisons += 1
-            if node.key <= key:
-                node = node.right
-            else:
-                node = node.left
-
-            self.comparisons += 1
-
-        self.comparisons += 1
-        if z == self.TNULL:
-            if verbose:
-                print("Couldn't find key in the tree")
-            return
-
-        y = z
-        y_original_colour = y.colour
-
-        self.comparisons += 2
-        if z.left == self.TNULL:
-
-            self.comparisons -= 1
-            x = z.right
-            self.__rb_transplant(z, z.right)
-        elif z.right == self.TNULL:
-            x = z.left
-            self.__rb_transplant(z, z.left)
-        else:
-            y = self.minimum(z.right)
-            y_original_colour = y.colour
-            x = y.right
-
-            self.comparisons += 1
-            if y.parent == z:
-                x.parent = y
-            else:
-                self.__rb_transplant(y, y.right)
-                y.right = z.right
-                y.right.parent = y
-
-            self.__rb_transplant(z, y)
-            y.left = z.left
-            y.left.parent = y
-            y.colour = z.colour
-
-        self.comparisons += 1
-        if y_original_colour == 0:
-            self.__fix_delete(x)
-
-    def minimum(self, node):
-        self.comparisons += 1
-        while node.left != self.TNULL:
-            node = node.left
-            self.comparisons += 1
-        return node
-
-    def __rb_transplant(self, u, v):
-        self.comparisons += 2
-        if u.parent is None:
-            self.comparisons -= 1
-            self.root = v
-        elif u == u.parent.left:
-            u.parent.left = v
-        else:
-            u.parent.right = v
-        v.parent = u.parent
-
-    def delete(self, key):
-        self.comparisons += 1
-        self.nodes -= 1
-        self._delete(self.root, key)
-
-    def search(self, key, RBTN):
-        """
-        Searches for node with key as its key value
-        :param key: key value of the node that needs to be found
-        :param RBTN: root of current sub tree
-        :return: AVLNode with key as its key
-        """
-        self.comparisons += 1
-        if RBTN is None:
-            return None
+        if is_red(h.left) and is_red(h.right):
+            h.flipColours(self)
 
         self.comparisons += 3
-        if RBTN.key == key:
+        if key == h.key:
             self.comparisons -= 2
-            return RBTN
-        elif RBTN.key > key:
+            #print("Key already inserted")
+        elif key < h.key:
             self.comparisons -= 1
-            return self.search(key, RBTN.right)
+            h.left = self._insert(h.left, key)
         else:
-            return self.search(key, RBTN.left)
+            h.right = self._insert(h.right, key)
+
+        self.comparisons += 2
+        if is_black(h.left) and is_red(h.right):
+            self.rotations += 1
+            h = h.rotateLeft()
+
+        self.comparisons += 2
+        if is_red(h.left) and is_red(h.left.left):
+            self.rotations += 1
+            h = h.rotateRight()
+
+        return h.setHeight()
+
+    def delete(self, key):
+        res = self.search(key)
+
+        self.comparisons += 1
+        if res is None:
+            #print("Tree does not contain key '{0}'.\n".format(key))
+            return False
+
+        self.comparisons += 2
+        if is_black(self.root.left) and is_black(self.root.right):
+            self.root.color = RED
+
+        self.comparisons += 1
+        if self.root is not None:
+            self.root = self._delete(self.root, key)
+
+        self.comparisons += 1
+        if not self.is_empty():
+            self.root.color = BLACK
+
+    def _delete(self, h, key):
+        """
+        Delete a node with the given key (recursively) from the tree below.
+        """
+
+        self.comparisons += 1
+        if key < h.key:
+            self.comparisons += 2
+            if is_black(h.left) and h.left and is_black(h.left.left):
+                h = h.move_red_left(self)
+            h.left = self._delete(h.left, key)
+        else:
+
+            self.comparisons += 1
+            if is_red(h.left):
+                h = h.rotateRight()
+
+            self.comparisons += 2
+            if key == h.key and h.right is None:
+                return None
+
+            self.comparisons += 3
+            if is_black(h.right) and h.right and is_black(h.right.left):
+                h = h.move_red_right(self)
+
+            self.comparisons += 1
+            if key == h.key:
+                h.key = h.right.min(self)
+                h.right = h.right.delete_min(self)
+            else:
+                h.right = self._delete(h.right, key)
+
+        return h.fix_up(self)
+
+    def delete_min(self):
+        self.root = self.root.delete_min(self)
+        self.root.color = BLACK
+
+    def delete_max(self):
+        self.root = self.root.delete_max(self)
+        self.root.color = BLACK
+
+    def min(self):
+        self.comparisons += 1
+        return None if self.root is None else self.root.min(self)
+
+    def max(self):
+        self.comparisons += 1
+        return None if self.root is None else self.root.max(self)
+
+
+# rbt = LLRBT()
+# rbt.insert(10)
+# rbt.insert(15)
+# rbt.insert(20)
+# rbt.insert(25)
+# rbt.insert(30)
+# rbt.insert(35)
+# rbt.insert(40)
+# rbt.insert(45)
+# rbt.delete(40)
+# rbt.delete(20)
+
+

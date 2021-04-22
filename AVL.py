@@ -102,7 +102,6 @@ class AVL(object):
     def __init__(self):
         self.root = None
         self.rotations = 0
-        self.nodes = 0
         self.comparisons = 0
 
     def __str__(self, AVLN=None):
@@ -190,7 +189,6 @@ class AVL(object):
         # Standard BST insertion
         self.comparisons += 1
         if AVLN is None:
-            self.nodes += 1
             return AVLNode(key)
 
         self.comparisons += 1
@@ -284,9 +282,9 @@ class AVL(object):
                 AVLN = None
                 return temp
 
-            temp = self.getMinValueNode(AVLN.left)
+            temp = self.getMinValueNode(AVLN.right)
             AVLN.key = temp.key
-            AVLN.left = self._delete(AVLN.left, temp.key)
+            AVLN.right = self._delete(AVLN.right, temp.key)
 
         # Balancing
         bf = self.getBalance(AVLN)
@@ -317,7 +315,6 @@ class AVL(object):
         Deletes the node with key from the tree
         :param key: key value of the node that needs to be deleted
         """
-        self.nodes -= 1
         self.root = self._delete(self.root, key)
 
     def search(self, key, AVLN: AVLNode):
