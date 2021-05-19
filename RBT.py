@@ -285,6 +285,12 @@ class LLRBT:
         self.root.colour = 0
 
     def _insert(self, h: Node, key):
+        """
+        Recursive helper function to insert key into the tree
+        :param h: Current sub tree root node
+        :param key: key to be inserted
+        :return: height updated tree with key inserted
+        """
         if h is None:
             return Node(key)
 
@@ -314,6 +320,9 @@ class LLRBT:
         return h.setHeight()
 
     def delete(self, key):
+        """
+        Deletes key from tree
+        """
         res = self.search(key)
 
         self.comparisons += 1
@@ -332,9 +341,12 @@ class LLRBT:
         if not self.isEmpty():
             self.root.color = BLACK
 
-    def _delete(self, h, key):
+    def _delete(self, h: Node, key):
         """
-        Delete a node with the given key (recursively) from the tree below.
+        Recursive helper function to delete key from the tree
+        :param h: Current sub tree root node
+        :param key: key to be removed
+        :return: tree with key removed
         """
 
         self.comparisons += 1
@@ -367,18 +379,30 @@ class LLRBT:
         return h.fixUp(self)
 
     def deleteMin(self):
+        """
+        Remove smallest Node from tree
+        """
         self.root = self.root.deleteMin(self)
         self.root.color = BLACK
 
     def deleteMax(self):
+        """
+        Remove largest Node from tree
+        """
         self.root = self.root.deleteMax(self)
         self.root.color = BLACK
 
     def min(self):
+        """
+        :return: None if root is None, else the smallest node
+        """
         self.comparisons += 1
         return None if self.root is None else self.root.min(self)
 
     def max(self):
+        """
+        :return: None if root is None, else the largest node
+        """
         self.comparisons += 1
         return None if self.root is None else self.root.max(self)
 
