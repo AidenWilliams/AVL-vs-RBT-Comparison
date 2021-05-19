@@ -11,6 +11,15 @@ def isBlack(h):
 
 
 class Node:
+    """
+    Node class for an RB Tree
+
+    Node is a basic node object with a key,  2 children, height and colour.
+
+    A string function is provided for nice printing of the tree.
+
+    Infix is provided with a number of other RB related functions.
+    """
     def __init__(self, key=None, left_child=None, right_child=None, colour=RED):
         self.key = key
         self.left = left_child
@@ -61,31 +70,51 @@ class Node:
         return result
 
     def min(self, tree):
+        """
+        :param tree: tree node makes part of
+        :return: key if it this node is smallest in the tree
+        """
         tree.comparisons += 1
         return self.key if self.left is None else self.left.min(tree)
 
     def max(self, tree):
+        """
+        :param tree: tree node makes part of
+        :return: key if it this node is largest in the tree
+        """
         tree.comparisons += 1
         return self.key if self.right is None else self.right.max(tree)
 
     def fixUp(self, tree):
+        """
+        Fixes tree on the way up after deletion
+        :param tree: tree that needs fixing
+        :return: fixed tree
+        """
         tree.comparisons += 1
         if isRed(self.right):
             tree.rotations += 1
             self = self.rotateLeft()
 
-        tree.comparisons += 2
+        tree.comparisons += 3
+        # Double red on left case
         if isRed(self.left) and self.left and isRed(self.left.left):
             tree.rotations += 1
             self = self.rotateRight()
 
         tree.comparisons += 2
+        # Both children are red
         if isRed(self.left) and isRed(self.right):
             self.flipColours(tree)
 
         return self.setHeight()
 
     def flipColours(self, tree):
+        """
+        Flips the colours of a tree's immediate children
+        :param tree: Tree that will have its children's colours flipped
+        :return: Tree with children's colour flipped
+        """
         tree.comparisons += 1
         self.colour = 0 if self.colour == 1 else 1
 
@@ -100,6 +129,10 @@ class Node:
             self.right.colour = 0 if self.right.colour == 1 else 1
 
     def rotateLeft(self):
+        """
+        Rotates current node to the left
+        :return: Rotated subtree
+        """
         x = self.right
         self.right = x.left
         x.left = self
@@ -108,6 +141,10 @@ class Node:
         return x
 
     def rotateRight(self):
+        """
+        Rotates current node to the right
+        :return: Rotated subtree
+        """
         x = self.left
         self.left = x.right
         x.right = self
@@ -116,6 +153,11 @@ class Node:
         return x
 
     def moveRedLeft(self, tree):
+        """
+        Does a Left Right rotation and fixes colours
+        :param tree: Tree that needs rotation
+        :return: Rotated subtree
+        """
         self.flipColours(tree)
         tree.comparisons += 2
         if self.right and isRed(self.right.left):
@@ -126,6 +168,11 @@ class Node:
         return self
 
     def moveRedRight(self, tree):
+        """
+        Does a Right rotation and fixes colours
+        :param tree: Tree that needs rotation
+        :return: Rotated subtree
+        """
         self.flipColours(tree)
         tree.comparisons += 2
         if self.left and isRed(self.left.left):
@@ -135,6 +182,11 @@ class Node:
         return self
 
     def deleteMin(self, tree):
+        """
+        Deletes smallest node in tree
+        :param tree:
+        :return: Removes smallest node from tree
+        """
         tree.comparisons += 1
         if self.left is None:
             return None
@@ -148,6 +200,11 @@ class Node:
         return self.fixUp(tree)
 
     def deleteMax(self, tree):
+        """
+        Deletes largest node in tree
+        :param tree:
+        :return: Removes largest node from tree
+        """
         tree.comparisons += 1
         if isRed(self.left):
             tree.rotations += 1
@@ -247,7 +304,6 @@ class LLRBT:
 
         self.comparisons += 1
         if res is None:
-            #print("Tree does not contain key '{0}'.\n".format(key))
             return False
 
         self.comparisons += 2
