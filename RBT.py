@@ -229,6 +229,11 @@ class Node:
 
 
 class LLRBT:
+    """
+    Left Leaning Red Black tree class which contains operations that make up and define an LLRB tree.
+
+    rotation and comparison counts are kept for tree comparison
+    """
     def __init__(self):
         self.root = None
         self.rotations = 0
@@ -247,9 +252,16 @@ class LLRBT:
                 return '\n'.join(self.root.__str__(self.root, notebook))
 
     def isEmpty(self):
+        """
+        :return: Whether tree is empty or not
+        """
         return self.root is None
 
     def search(self, key):
+        """
+        :param key: Key of node
+        :return: Returns Node if found, None if not found
+        """
         x = self.root
         self.comparisons += 1
         while x is not None:
@@ -266,6 +278,9 @@ class LLRBT:
         return None
 
     def insert(self, key):
+        """
+        Inserts key in tree using the recursive _insert function
+        """
         self.root = self._insert(self.root, key)
         self.root.colour = 0
 
@@ -280,7 +295,6 @@ class LLRBT:
         self.comparisons += 3
         if key == h.key:
             self.comparisons -= 2
-            #print("Key already inserted")
         elif key < h.key:
             self.comparisons -= 1
             h.left = self._insert(h.left, key)
