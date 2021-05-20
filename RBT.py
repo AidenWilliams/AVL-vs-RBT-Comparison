@@ -20,6 +20,7 @@ class Node:
 
     Infix is provided with a number of other RB related functions.
     """
+
     def __init__(self, key=None, left_child=None, right_child=None, colour=RED):
         self.key = key
         self.left = left_child
@@ -234,6 +235,7 @@ class LLRBT:
 
     rotation and comparison counts are kept for tree comparison
     """
+
     def __init__(self):
         self.root = None
         self.rotations = 0
@@ -407,16 +409,15 @@ class LLRBT:
         return None if self.root is None else self.root.max(self)
 
 
-# rbt = LLRBT()
-# rbt.insert(10)
-# rbt.insert(15)
-# rbt.insert(20)
-# rbt.insert(25)
-# rbt.insert(30)
-# rbt.insert(35)
-# rbt.insert(40)
-# rbt.insert(45)
-# rbt.delete(40)
-# rbt.delete(20)
-
-
+if __name__ == '__main__':
+    rbt = LLRBT()
+    rbt.insert(10)
+    rbt.insert(15)
+    rbt.insert(20)
+    rbt.insert(25)
+    rbt.insert(30)
+    rbt.insert(35)
+    rbt.insert(40)
+    rbt.insert(45)
+    rbt.delete(40)
+    rbt.delete(20)

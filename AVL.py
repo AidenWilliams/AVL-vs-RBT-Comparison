@@ -339,3 +339,17 @@ class AVL(object):
             return self.search(key, AVLN.right)
         else:
             return self.search(key, AVLN.left)
+
+
+if __name__ == '__main__':
+    avl = AVL()
+    avl.insert(10)
+    avl.insert(15)
+    avl.insert(20)
+    avl.insert(25)
+    avl.insert(30)
+    avl.insert(35)
+    avl.insert(40)
+    avl.insert(45)
+    avl.delete(40)
+    avl.delete(20)
