@@ -270,7 +270,7 @@ class LLRBT:
             self.comparisons += 3
             if key == x.key:
                 self.comparisons -= 2
-                return x.key
+                return x
             elif key < x.key:
                 self.comparisons -= 1
                 x = x.left
@@ -333,7 +333,7 @@ class LLRBT:
 
         self.comparisons += 2
         if isBlack(self.root.left) and isBlack(self.root.right):
-            self.root.color = RED
+            self.root.colour = RED
 
         self.comparisons += 1
         if self.root is not None:
@@ -341,7 +341,7 @@ class LLRBT:
 
         self.comparisons += 1
         if not self.isEmpty():
-            self.root.color = BLACK
+            self.root.colour = BLACK
 
     def _delete(self, h: Node, key):
         """
@@ -385,14 +385,14 @@ class LLRBT:
         Remove smallest Node from tree
         """
         self.root = self.root.deleteMin(self)
-        self.root.color = BLACK
+        self.root.colour = BLACK
 
     def deleteMax(self):
         """
         Remove largest Node from tree
         """
         self.root = self.root.deleteMax(self)
-        self.root.color = BLACK
+        self.root.colour = BLACK
 
     def min(self):
         """
