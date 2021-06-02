@@ -107,7 +107,7 @@ class Node:
         if isRed(self.left) and isRed(self.right):
             self.flipColours(tree)
 
-        return self.setHeight()
+        return self
 
     def flipColours(self, tree):
         """
@@ -222,10 +222,6 @@ class Node:
 
         return self.fixUp(tree)
 
-    def setHeight(self):
-        self.height = 1 + max(self.left and self.left.height or 0,
-                              self.right and self.right.height or 0)
-        return self
 
 
 class LLRBT:
@@ -317,7 +313,7 @@ class LLRBT:
             self.rotations += 1
             h = h.rotateRight()
 
-        return h.setHeight()
+        return h
 
     def delete(self, key):
         """
@@ -406,17 +402,30 @@ class LLRBT:
         self.comparisons += 1
         return None if self.root is None else self.root.max(self)
 
+    def height(self, RBNode: Node):
+        """
+        Gets height of RBNode i.e. distance from it to the deepest node in its sub tree.
+        :param Node: Starting Node
+        :return: height
+        """
+        h = 0
+        self.comparisons += 1
+        if RBNode is not None:
+            l_height = self.height(RBNode.left)
+            r_height = self.height(RBNode.right)
+            max_height = max(l_height, r_height)
+            h = max_height + 1
+        return h
 
-# rbt = LLRBT()
-# rbt.insert(10)
-# rbt.insert(15)
-# rbt.insert(20)
-# rbt.insert(25)
-# rbt.insert(30)
-# rbt.insert(35)
-# rbt.insert(40)
-# rbt.insert(45)
-# rbt.delete(40)
-# rbt.delete(20)
+rbt = LLRBT()
+rbt.insert(10)
+rbt.insert(15)
+rbt.insert(20)
+rbt.insert(25)
+rbt.insert(30)
+rbt.insert(35)
+rbt.insert(40)
+rbt.insert(45)
 
-
+print(rbt)
+print(rbt.height(rbt.root))
